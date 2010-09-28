@@ -1,0 +1,64 @@
+/**
+ * License: GPL v2
+ * Author:  Hannes Hofmann http://uwr1.de/
+ */
+
+/**
+ * all views
+ */
+
+
+
+/**
+ * sidebar widget
+ */
+
+
+
+
+/**
+ * admin views
+ */
+.error
+{
+	background: lightcoral;
+	border: 1px solid #e64f69;
+	margin: 1em 5% 10px;
+	padding: 0 1em 0 1em;
+}
+
+.center		{ text-align: center;	}
+.right		{ text-align: right;	}
+.left		{ text-align: left;	}
+.top		{ vertical-align: top;	}
+.bold		{ font-weight: bold;	}
+.private	{ color: #e64f69;	}
+
+#breadcrumbs     { font-size:80%; }
+
+.index.region    { float:left; margin-right:1em; margin-bottom:1em; }
+
+div.ranking,
+div.matchday     { margin-bottom:1.5em; }
+	div.ranking div.notes { font-size:85%; }
+	div.ranking a.notes-link { font-size:80%; }
+div.md-header    { margin-bottom:0.5em; overflow:auto; }
+div.md-title     { float:left; }
+div.md-edit-link { float:right; }
+
+table.spielplan {
+	width:100%;
+	font-size:90%;
+	white-space:nowrap;
+	}
+	table.spielplan tr.alt       { background:#f8f8f8; }
+	table.spielplan td           { white-space:nowrap; }
+	table.spielplan td.win       { font-weight:bold; }
+	table.spielplan td.num       { text-align:center; }
+	table.spielplan td.r,
+	table.spielplan td.ergebnis  { text-align:right; }
+	table.spielplan td.kommentar { white-space:normal; }
+		table.spielplan td .detail {
+			font-size:smaller;
+			color:#aaa;
+			}
