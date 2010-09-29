@@ -449,7 +449,7 @@ class Uwr1resultsController {
 				if ( !Uwr1resultsModelLeague::instance()->found() ) {
 					new Uwr1resultsException('Diese Liga wurde nicht gefunden.');
 				}
-				if (2 == $_GET['v']) {
+				if (2 == @$_GET['v']) {
 					$av .= '-v2'; // use version 2
 				}
 			}
