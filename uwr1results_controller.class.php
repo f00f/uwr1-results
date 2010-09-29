@@ -268,28 +268,31 @@ class Uwr1resultsController {
 		// a post that doesn't really exist.
 		// post_name is used in get_permalink()
 		$view = Uwr1resultsController::whichView();
-		if ('index' == $view) {
+		switch ($view) {
+		case 'index':
 			$post->ID = UWR1RESULTS_PAGE_ID_INDEX;
 			$post->post_name = 'ergebnisse';
-		} else if ('league' == $view) {
+			break;
+		case 'league':
 			$l =& Uwr1resultsModelLeague::instance();
 			$leagueId = $l->id();
 			$post->ID = UWR1RESULTS_PAGE_ID_LEAGUE_PX.sprintf('%03d', $leagueId);
 			$post->post_name = 'ergebnisse/liga/'.$l->slug();
-		} else if ('tournament' == $view) {
+		case 'tournament':
 			$t =& Uwr1resultsModelLeague::instance();
 			$tournamentId = $t->id();
 			$post->ID = UWR1RESULTS_PAGE_ID_TOURNAMENT_PX.sprintf('%03d', $tournamentId);
 			$post->post_name = 'ergebnisse/turnier/'.$t->slug();
-		} else if ('ajax-ranking' == $view) {
+			break;
+		case 'ajax-ranking':
+		case 'ajax-ranking-v2':
 			$l =& Uwr1resultsModelLeague::instance();
 			$leagueId = $l->id();
-//		} else if ('year' == $view) {
-//			$post->ID = UWR1RESULTS_PAGE_ID_PREFIX.Uwr1resultsModel::year().'00';
-//		} else if ('current' == $view) {
-		} else {
+			break;
+		default:
 			$post->ID = -1;
 			$post->post_name = 'ergebnisse';
+			break;
 		}
 
 		// Static means a page, not a post.
@@ -445,6 +448,9 @@ class Uwr1resultsController {
 				Uwr1resultsModelLeague::instance()->findBySlug( $wp_query->query_vars['q'] );
 				if ( !Uwr1resultsModelLeague::instance()->found() ) {
 					new Uwr1resultsException('Diese Liga wurde nicht gefunden.');
+				}
+				if (2 == $_GET['v']) {
+					$av .= '-v2'; // use version 2
 				}
 			}
 			return 'ajax-'.$av;
