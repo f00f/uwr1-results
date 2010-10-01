@@ -79,6 +79,12 @@ SQL;
 		$this->_wpdb->query($sql);
 	}
 
+	protected function leagueSlug() {
+		$rmf = Uwr1resultsModelFixture::instance();
+		$fixture  = $rmf->findById($this->fixtureId());
+		return $fixture->leagueSlug();
+	}
+
 	private function updatePoints() {
 		if ( $this->goalsBlue() == $this->goalsWhite() ) {
 			$this->set( 'pointsBlue', UWR1RESULTS_PTS_DRAW );
@@ -192,7 +198,10 @@ SQL;
 			. ' VALUES'
 			. " ({$valuesStr})";
 //		print $sql;exit;
-		return $this->_wpdb->query($sql);
+		$res = $this->_wpdb->query($sql);
+		
+		$this->notifyJsonCache($this->leagueSlug(), __FILE__);
+		return $res;
 	}
 
 

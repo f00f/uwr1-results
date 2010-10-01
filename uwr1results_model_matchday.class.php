@@ -84,6 +84,14 @@ SQL;
 		return $this->properties[ 'name' ];
 	}
 
+
+	protected function leagueSlug() {
+		$rml = Uwr1resultsModelLeague::instance();
+		$league   = $rml->findById($this->leagueId());
+		return $league->leagueSlug();
+	}
+	
+
 	public function saveMany($leagueId) {
 		if (!$leagueId) {
 			return new Uwr1resultsException('No ID given');

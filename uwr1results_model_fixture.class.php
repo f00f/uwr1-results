@@ -71,6 +71,14 @@ SQL;
 		$this->_wpdb->query($sql);
 	}
 
+
+	protected function leagueSlug() {
+		$rmm = Uwr1resultsModelMatchday::instance();
+		$matchday = $rmm->findById($this->matchdayId());
+		return $matchday->leagueSlug();
+	}
+
+
 	public function saveMany($matchdayId) {
 		if (!$matchdayId) {
 			return new Uwr1resultsException('No ID given');

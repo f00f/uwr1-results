@@ -153,6 +153,11 @@ class Uwr1resultsModel {
 	}
 
 
+	// generic implementation returns emtpy string
+	protected function leagueSlug() {
+		return '';
+	}
+	
 	// FIND METHODS
 		
 	public function findById( $id = null ) {
@@ -206,6 +211,35 @@ class Uwr1resultsModel {
 		return $this;
 	}
 
+	public function notifyJsonCache($leagueSlug = '', $caller = 'undefined') {
+		if (!$leagueSlug) {
+			$subject = "JsonCache Debug Message ---";
+			$mail = "notifyJsonCache wurde ohne \$leagueSlug aufgerufen von {$caller}";
+			mail('hannes@uwr1.de', $subject, $mail);
+			return;
+		}
+
+		$wgetUrl = 'not set';
+		$doWget  = 'nein';
+		if (defined('UWR1RESULTS_JSON_CACHE_UPDATE_URL') && UWR1RESULTS_JSON_CACHE_UPDATE_URL != '') {
+			//wget(UWR1RESULTS_JSON_CACHE_UPDATE_URL . );
+			$doWget = 'ja';
+			$wgetUrl = UWR1RESULTS_JSON_CACHE_UPDATE_URL . '?' . $leagueSlug;
+			file_get_contents($wgetUrl);
+		}
+
+		/*
+		$subject = "[JsonCache] Debug Message (notifyJsonCache) +++";
+		$mail = "notifyJsonCache wurde aufgerufen von {$caller}\n"
+			. "leagueSlug: {$leagueSlug}\n"
+			. "doWget....: {$doWget}\n"
+			. "wgetUrl...: {$wgetUrl}\n"
+			;
+		mail('hannes@uwr1.de', $subject, $mail, "From: [JsonCache] Debug <jsoncache@uwr1.de>\n\n");
+		*/
+		return;
+	}
+
 	public function populate($values) {
 		foreach ($values as $prop => $value) {
 			$this->set($prop, $value);
@@ -229,7 +263,10 @@ class Uwr1resultsModel {
 			. ' VALUES'
 			. " ({$valuesStr})";
 		//print $sql . ' (Uwr1resultsModel::save)'; exit;
-		return $this->_wpdb->query($sql);
+		$res = $this->_wpdb->query($sql);
+
+		$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . $this->table());
+		return $res;
 	}
 } // Uwr1resultsModel
 ?>

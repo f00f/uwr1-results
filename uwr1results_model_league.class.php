@@ -73,6 +73,12 @@ SQL;
 		return $this->_wpdb->query($sql);
 	}
 
+
+	protected function leagueSlug() {
+		return $this->slug();
+	}
+
+
 	// try to find league_id automatically from request
 	public function autoId() {
 		if (!empty($_REQUEST['league_id'])) {
@@ -215,6 +221,8 @@ SQL;
 				. " ({$this->id}, {$t}, '{$team->team_ID}')";
 			$this->_wpdb->query($sql);
 		}
+
+		$this->notifyJsonCache($this->leagueSlug(), __FILE__);
 	}
 
 
