@@ -42,14 +42,19 @@ if ($count > 0) {
 	$status = 'Err';
 }
 
-print @$_GET['jsonp'].'({'
+$jsonp1 = $jsonp2 = '';
+if (@$_GET['jsonp']) {
+	$jsonp1 = @$_GET['jsonp'].'(';
+	$jsonp2 = ')';
+}
+print $jsonp1.'{'
 	. '"s":"'.$status.'"'
 //	. ',"type":"rnk"'
 	. ',"cnt":' . $count
 	. ',"res":[' // open results array
 	. implode(',', $rankingFlat)
 	. ']' // close results array
-	.'})'; // close anon object and )
+	.'}'.$jsonp2; // close anon object
 
 exit;
 ?>
