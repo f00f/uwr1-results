@@ -37,13 +37,13 @@ foreach ($ranking as $r) {
 
 $count = count($ranking);
 if ($count > 0) {
-	$status = 0;
+	$status = 'OK';
 } else {
-	$status = -1;
+	$status = 'Err';
 }
 
 print @$_GET['jsonp'].'({'
-	. '"s":'.$status
+	. '"s":"'.$status.'"'
 //	. ',"type":"rnk"'
 	. ',"cnt":' . $count
 	. ',"res":[' // open results array
