@@ -32,6 +32,9 @@ define('UWR1RESULTS_PAGE_ID_TOURNAMENT_PX', UWR1RESULTS_PAGE_ID_PX.'84'); // 76 
 define('UWR1RESULTS_SEASON', 2010);
 define('UWR1RESULTS_TOURNAMENT_REGION', -1);
 
+define('UWR1RESULTS_JSON_CACHE_URL', 'http://uwr1cdn.appspot.com/jc/json');
+define('UWR1RESULTS_JSON_CACHE_UPDATE_URL', 'http://uwr1cdn.appspot.com/jc/update');
+
 # END OF CONFIG
 
 define('UWR1RESULTS_VERSION', '0.7.2');
