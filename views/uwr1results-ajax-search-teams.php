@@ -1,6 +1,6 @@
 <?php
 /*
-Template Name: uwr1results Admin Index View
+Template Name: uwr1results Ajax Search Teams View
 Plugin URI: http://uwr1.de/
 Author: Hannes Hofmann
 Author URI: http://uwr1.de/
