@@ -6,7 +6,11 @@ Author: Hannes Hofmann
 Author URI: http://uwr1.de/
 */
 
-header('Content-type: application/json');
+if (@$_GET['dbg']) {
+	header('Content-type: text/plain');
+} else {
+	header('Content-type: application/json');
+}
 
 // this should be in the controller, but it's more convenient to have it here - for now.
 $league =& Uwr1resultsModelLeague::instance();
@@ -19,6 +23,7 @@ $ranking =& $league->ranking();
 $rankingFlat = array();
 $rank = 0;
 foreach ($ranking as $r) {
+	// escape --- (&mdash;)
 	if (!is_int($r['goalsDiff'])) { $r['goalsDiff'] = '"' . $r['goalsDiff'] . '"'; }
 	if (!is_int($r['pointsPos'])) { $r['pointsPos'] = '"' . $r['pointsPos'] . '"'; }
 	$rankingFlat[] = '{'
