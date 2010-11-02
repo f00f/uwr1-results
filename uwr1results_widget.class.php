@@ -68,20 +68,22 @@ class Uwr1resultsWidget {
 		if (@$args['detailed']) $detailed = $args['detailed'];
 		$linkInTitle = @$args['link_in_title'];
 
-		$results = Uwr1resultsModelResult::instance()->findRecentResults(array('days' => $days, 'num' => $num));
+		$rv = Uwr1resultsModelResult::instance()->findRecentResults2(array('days' => $days, 'num' => $num));
 		
 		if ($linkInTitle) {
-			$title .= ' ('.$days.' Tage) &mdash; <a class="uwr1results-icon" href="'.Uwr1resultsView::indexUrl().'">'.__('Alle Liga-Ergebnisse').' &raquo;</a>';
+			if ('days' == $rv['limit']) { $title .= ' (letzte '.$days.' Tage)'; }
+			if ('num' == $rv['limit'] ) { $title .= ' (letzte '.$num.' Ergebnisse)'; }
+			$title .= ' &mdash; <a class="uwr1results-icon" href="'.Uwr1resultsView::indexUrl().'">'.__('Alle Liga-Ergebnisse').' &raquo;</a>';
 		}
 
 		print str_replace('id="uwr1results"', 'id="uwr1results-widget"', $before_widget);
 		print $before_title . $title . $after_title;
 
-		if ($results) {
+		if ('OK' == $rv['status']) {
 			print '<table cellspacing="0">';
 			$b1 = ($detailed ? '<b>' : '');
 			$b2 = ($detailed ? '</b>' : '');
-			foreach($results as $r) {
+			foreach($rv['result'] as $r) {
 				if ($detailed) {
 					$user_info = get_userdata($r->user_ID);
 				}
@@ -115,15 +117,14 @@ class Uwr1resultsWidget {
 		}
 		else
 		{
-			// ! $results
+			// ! 'OK" == $rv['status']
 			$season = Uwr1resultsController::season();
 			$season = $season.'/'.($season+1); // TODO: make a function for that
 			print '<table><tr><td>'
 				. 'Es sind noch keine Ergebnisse f&uuml;r die Saison ' . $season . ' vorhanden.<br />'
-				. 'Falls Du welche weisst kannst Du sie <a href="http://uwr1.de/ergebnisse">hier eintragen</a>'
+				. 'Falls Du welche weisst kannst Du sie <a href="http://uwr1.de/ergebnisse">hier eintragen</a>.'
 				. '</td></tr></table>';
 		}
-		
 		print $after_widget;
 	}
 
