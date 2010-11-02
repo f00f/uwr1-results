@@ -453,6 +453,11 @@ class Uwr1resultsController {
 					$av .= '-v2'; // use version 2
 				}
 			}
+			if ('search-teams' == $av) {
+				if (2 == @$_GET['v']) {
+					$av .= '-v2'; // use version 2
+				}
+			}
 			return 'ajax-'.$av;
 		}
 
