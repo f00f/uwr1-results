@@ -161,11 +161,15 @@ SQL;
 				'goalsRegularWhite' => 0  + $f['goals_regular_white'],
 				'comment'           => '' . $f['comment'],
 			));
-			$rv = $r->save();
+			$rv = $this->save(false); // don't notifyJsonCache for each store
 			if (false === $rv) {
+				$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . $this->table());
 				return false;
 			}
 		}
+
+		// eventually update cache
+		$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . $this->table());
 
 		return true;
 	} // saveMany
@@ -315,7 +319,13 @@ SQL;
 		return $this->_wpdb->get_results($sql);
 	}
 
+	// for backward-compatibility: unwrap return value
 	public function findRecentResults( $args = null ) {
+		$ret = $this->findRecentResults2($args);
+		return $ret['result'];
+	}
+
+	public function findRecentResults2( $args = null ) {
 		// backward compatibility, when the only parameter was an int, $num
 		if (!is_array($args)) {
 			$newArgs = array();
@@ -333,6 +343,11 @@ SQL;
 		$fixturesTable  = Uwr1resultsModelFixture::instance()->table();
 		$teamsTable     = Uwr1resultsModelTeam::instance()->table();
 		$leaguesTable   = Uwr1resultsModelLeague::instance()->table();
+
+		$ret = array();
+		$ret['status'] = 'empty';
+		$ret['limit']  = 'none';
+		$ret['result'] = null;
 
 		////////////////////////////////////////////////////////////////
 		// find all results from the last N days
@@ -360,7 +375,10 @@ SQL;
 			$this->_wpdb->get_results($sql);
 	
 			if ($this->_wpdb->num_rows >= $args['num']) {
-				return $this->_wpdb->last_result;
+				$ret['status'] = 'OK';
+				$ret['limit']  = 'days';
+				$ret['result'] = $this->_wpdb->last_result;
+				return $ret;
 			}
 		}
 		
@@ -389,7 +407,10 @@ SQL;
 		// TODO: think about using $this->_wpdb->get_row();
 		// OBJECT, ARRAY_A, ARRAY_N
 
-		return $this->_wpdb->get_results($sql);
+		$ret['status'] = 'OK';
+		$ret['limit']  = 'num';
+		$ret['result'] = $this->_wpdb->get_results($sql);
+		return $ret;
 	}
 
 } // Uwr1resultsModelResult

@@ -104,6 +104,7 @@ SQL;
 				$t->save();
 				$team =& $t->findByName( $f['team_blue'] );
 				if (false === $team) {
+					$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . $this->table());
 					die('error creating team '.$f['team_blue']);
 				}
 			}
@@ -119,6 +120,7 @@ SQL;
 				$t->save();
 				$team =& $t->findByName( $f['team_white'] );
 				if (false === $team) {
+					$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . $this->table());
 					die('error creating team '.$f['team_white']);
 				}
 			}
@@ -144,11 +146,15 @@ SQL;
 				'blueId'     => $f['blue_id'],
 				'whiteId'    => $f['white_id'],
 			));
-			$rv = $this->save();
+			$rv = $this->save(false); // don't notifyJsonCache for each store
 			if (false === $rv) {
+				$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . $this->table());
 				return false;
 			}
 		}
+
+		// eventually update cache
+		$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . $this->table());
 
 		return true;
 	} // saveMany

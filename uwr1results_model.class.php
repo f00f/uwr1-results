@@ -215,7 +215,7 @@ class Uwr1resultsModel {
 		if (!$leagueSlug) {
 			$subject = "JsonCache Debug Message ---";
 			$mail = "notifyJsonCache wurde ohne \$leagueSlug aufgerufen von {$caller}";
-			mail('hannes@uwr1.de', $subject, $mail);
+			//mail('hannes@uwr1.de', $subject, $mail);
 			return;
 		}
 
@@ -246,7 +246,8 @@ class Uwr1resultsModel {
 		}
 	}
 
-	public function save() {
+	// @param bool notifyJsonCache: default is to send notification to JsonCache (App Engine)
+	public function save($notifyJsonCache = true) {
 		Uwr1resultsHelper::enforcePermission( 'save' );
 
 		$fields = array();
@@ -265,7 +266,9 @@ class Uwr1resultsModel {
 		//print $sql . ' (Uwr1resultsModel::save)'; exit;
 		$res = $this->_wpdb->query($sql);
 
-		$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . $this->table());
+		if ($notifyJsonCache) {
+			$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . $this->table());
+		}
 		return $res;
 	}
 } // Uwr1resultsModel

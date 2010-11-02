@@ -222,7 +222,8 @@ SQL;
 			$this->_wpdb->query($sql);
 		}
 
-		$this->notifyJsonCache($this->leagueSlug(), __FILE__);
+		//$this->notifyJsonCache($this->leagueSlug(), __FILE__);
+		$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . $this->table());
 	}
 
 

@@ -115,11 +115,15 @@ SQL;
 				'begin'        => '0000-00-00 00:00:00', // $md['begin'],
 				'end'          => '0000-00-00 00:00:00', // $md['end'],
 			));
-			$rv = $this->save();
+			$rv = $this->save(false); // don't notifyJsonCache for each store
 			if (false === $rv) {
+				$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . $this->table());
 				return false;
 			}
 		}
+
+		// eventually update cache
+		$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . $this->table());
 
 		return true;
 	} // saveMany
