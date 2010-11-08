@@ -55,6 +55,7 @@ if (@$_GET['jsonp']) {
 	$jsonp2 = ')';
 }
 print $jsonp1.'{'
+	. '"cver":'.UWR1RESULTS_AJAX_API_VERSION // Current VERsion
 	. '"s":"'.$status.'"'
 //	. ',"type":"rnk"'
 	. ',"cnt":' . $count
