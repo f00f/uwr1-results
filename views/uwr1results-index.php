@@ -16,7 +16,7 @@ get_header();
 ?>
 	<div id="league_page" class="wrap_content">
 	<div class="post">
-	<p class="update"><strong>Achtung:</strong> Dieser Teil von <a href="Unterwasserrugby">uwr1.de</a> befindet sich noch in der Entwicklung. Es kann deshalb passieren, dass noch Fehler auftreten.</p>
+	<p class="update">Dieser Teil von <a href="http://uwr1.de/" title="Unterwasserrugby">uwr1.de</a> befindet sich noch in der Entwicklung. Es kann deshalb passieren, dass noch Fehler auftreten.</p>
 	<?php
 
 	$title = Uwr1resultsView::title('');
