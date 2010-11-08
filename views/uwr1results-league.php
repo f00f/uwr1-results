@@ -8,7 +8,7 @@ Author URI: http://uwr1.de/
 Version: 0.1
 */
 
-function print_ranking(&$ranking) {
+function print_ranking(&$ranking, $dbgDV = false) {
 	global $printDebug;
 	$league =& Uwr1resultsModelLeague::instance();
 
@@ -44,7 +44,7 @@ function print_ranking(&$ranking) {
 			$rank['matchesPlayed'] = '('.$rank['friendlyMatchesPlayed'].'<sup><a href="#fn-F">F</a></sup>)';
 		}
 		print '<tr'.($altRowClass ? ' class="alt"' : '').'>'
-			. '<td>'.sprintf('%02d', ++$r).(@$rank['head2head'] ? '<abbr style="border:none;" title="Direkter Vergleich mit '.implode(', ', $rank['head2headTeams']).'">*</abbr>' : '').'</td>'
+			. '<td>'.sprintf('%02d', ++$r).(@$rank['head2head'] ? '<abbr style="border:none;" title="Direkter Vergleich mit '.implode(', ', array_unique($rank['head2headTeams'])).'">*</abbr>' : '').'</td>'
 			. '<td>'.$rank['name'].'</td>'
 			. '<td class="num">'.$rank['matchesPlayed'].'</td>'
 			. '<td class="r">'.$rank['goalsDiff'].'</td>'
@@ -100,7 +100,7 @@ $printDebug = (1 == $GLOBALS['current_user']->ID);
 ?>
 	<div id="league_page" class="wrap_content">
 	<div class="post">
-	<p class="update"><strong>Achtung:</strong> Dieser Teil von <a href="Unterwasserrugby">uwr1.de</a> befindet sich noch in der Entwicklung. Es kann deshalb passieren, dass noch Fehler auftreten.</p>
+	<p class="update">Dieser Teil von <a href="http://uwr1.de/" title="Unterwasserrugby">uwr1.de</a> befindet sich noch in der Entwicklung. Es kann deshalb passieren, dass noch Fehler auftreten.</p>
 	<?php
 	$season = Uwr1resultsController::season();
 	$season = $season.'/'.($season+1); // FIXME: use a function to do that
@@ -116,7 +116,12 @@ $printDebug = (1 == $GLOBALS['current_user']->ID);
 //		. ' &raquo; '
 		. $league->shortName().'</div><br />';
 
+if (1 == @$_GET['dv']) {
+	// direkter vergleich
+	print_ranking($league->rankingDV(), true);
+} else {
 	print_ranking($league->ranking());
+}
 
 	global $currentMatchday, $fixtureNumberTotal, $fixtureNumberLocal, $printFriendlyNote;
 	$currentMatchday = 0;
@@ -262,21 +267,21 @@ $printDebug = (1 == $GLOBALS['current_user']->ID);
 
 	<?php Uwr1resultsView::poweredBy(); ?>
 </div>
-<script src="<?php bloginfo('wpurl'); ?>/wp-includes/js/scriptaculous/prototype.js" type="text/javascript"></script>
-<script src="<?php bloginfo('wpurl'); ?>/wp-includes/js/scriptaculous/scriptaculous.js?load=effects" type="text/javascript"></script>
 <script type="text/javascript">
 jQuery(document).ready(function(){
 	// find fid parameter
 	var url = document.location.toString();
 	if (!url.match(/#/)) return; // the URL contains no anchor
 	var anchor = url.split('#')[1];
+	if (!anchor) return;
 	
 	var fid = anchor.match(/fid=(\d+)/)[1];
 	if (!fid) return; // the anchor contains no fid parameter
 
-	var elemId = 'fid'+fid;
-	new Effect.ScrollTo (elemId, {offset: -150});
-	new Effect.Highlight(elemId, {delay: 0.5, duration: 5});
+	var elemId = '#fid'+fid;
+	var ot=jQuery(elemId).offset().top;
+	jQuery('html,body').animate({scrollTop: ot - 100}, 1000);
+	jQuery(elemId).effect('highlight', null, 7000);
 });
 </script>
 <?php
