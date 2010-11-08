@@ -23,6 +23,7 @@ extends Uwr1resultsModel {
 	private $matchdays = null;
 	private $results = null;
 	private $ranking = null;
+	private $useDV = false;
 
 	/**
 	 * The singleton instance of this object.
@@ -119,6 +120,7 @@ SQL;
 			$this->ranking[ $f->t_b_ID ]['pointsPos'] += $f->result_points_b;
 			$this->ranking[ $f->t_b_ID ]['pointsNeg'] += $f->result_points_w;
 			$this->ranking[ $f->t_b_ID ]['matchesPlayed']++;
+			$this->ranking[ $f->t_b_ID ]['playedAgainst'][$f->t_w_ID] = true;
 	
 			$this->ranking[ $f->t_w_ID ]['id'] = $f->t_w_ID;
 			$this->ranking[ $f->t_w_ID ]['name'] = $f->t_w_name;
@@ -127,6 +129,7 @@ SQL;
 			$this->ranking[ $f->t_w_ID ]['pointsPos'] += $f->result_points_w;
 			$this->ranking[ $f->t_w_ID ]['pointsNeg'] += $f->result_points_b;
 			$this->ranking[ $f->t_w_ID ]['matchesPlayed']++;
+			$this->ranking[ $f->t_w_ID ]['playedAgainst'][$f->t_b_ID] = true;
 		}
 	
 		foreach ($this->ranking as $id => $team) {
@@ -146,6 +149,7 @@ SQL;
 
 	private function sortRanking() {
 		uasort($this->ranking, 'uwr1resLeagueRanking'); // usort, uasort, uksort
+		// TODO: remove duplicates from $rank['head2headTeams'] using array_unique()
 	}
 
 	// ACCESSORS
@@ -183,6 +187,11 @@ SQL;
 			}
 		}
 		return $this->results;
+	}
+
+	public function &rankingDV() {
+		$this->useDV = true;
+		return $this->ranking();
 	}
 
 	public function &ranking() {
@@ -284,15 +293,22 @@ SQL;
 		}
 	
 		else {
-			//print '<!-- DV: '.$a['name'].' vs. '.$b['name'].' -->';
-			$a['head2head'] = $b['head2head'] = true;
-			$a['head2headTeams'][] = $b['name'];
-			$b['head2headTeams'][] = $a['name'];
+			//print '<!-- DV: '.print_r($a['playedAgainst'], true).' vs. '.print_r($b, true).' -->';
+			if ($a['playedAgainst'][ $b['id'] ]) {
+				// find matches between a and b and evaluate them.
+				//print '<!-- DV: '.$a['name'].' vs. '.$b['name'].' -->';
+				$a['head2head'] = $b['head2head'] = true;
+				$a['head2headTeams'][] = $b['name'];
+				$b['head2headTeams'][] = $a['name'];
+
+				foreach ($this->results() as $f) {
+					// HIER FEHLT:
+					// direkter vgl pointsPos
+					// direkter vgl goalsDiff
+					// direkter vgl goalsPos
+				}
+			}
 		}
-		// HIER FEHLT:
-		// direkter vgl pointsPos
-		// direkter vgl goalsDiff
-		// direkter vgl goalsPos
 	
 		// equal pointsPos => higher goalsDiff = better
 		if ($a['goalsDiff'] <> $b['goalsDiff']) {
