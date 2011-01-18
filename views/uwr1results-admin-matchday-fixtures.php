@@ -160,7 +160,8 @@ print '</table>'
 // <![CDATA[
 //var newFixtureId = <?php print $fixtureNumberMatchday; ?>;
 function addSuggest(elem) {
-	elem.suggest( '<?php print Uwr1resultsView::ajaxUrl( 'search-teams' ); ?>', { delay: 100, minchars: 2 } );
+	//elem.suggest( '<?php print Uwr1resultsView::ajaxUrl( 'search-teams' ); ?>', { delay: 100, minchars: 2 } );
+	elem.suggest( 'http://uwr1.de/api/?module=teams&view=suche', { delay: 100, minchars: 2 } );
 }
 var noticeAdded = false;
 function addNotice() {
