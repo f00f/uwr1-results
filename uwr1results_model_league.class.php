@@ -301,12 +301,14 @@ SQL;
 				$a['head2headTeams'][] = $b['name'];
 				$b['head2headTeams'][] = $a['name'];
 
+/*
 				foreach ($this->results() as $f) {
 					// HIER FEHLT:
 					// direkter vgl pointsPos
 					// direkter vgl goalsDiff
 					// direkter vgl goalsPos
 				}
+*/
 			}
 		}
 	
