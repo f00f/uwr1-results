@@ -88,7 +88,7 @@ class Uwr1resultsWidget {
 					$user_info = get_userdata($r->user_ID);
 				}
 				print '<tr>'//.print_r($r, true)
-					. ($detailed ? '<td>'.date("d.m.", strtotime($r->result_modified)) . ':&nbsp;</td>' : '')
+					. ($detailed ? '<td class="date">'.date("d.m.", strtotime($r->result_modified)) . ':&nbsp;</td>' : '')
 					. '<td>'
 					. '<a href="'.Uwr1resultsView::resultsPageUrl($r->league_slug, $r->region_ID).'#fid='.$r->fixture_ID.'" class="uwr1results_widget uwr1results-icon">'
 					. $r->team_b_name . ' &mdash; ' . $r->team_w_name
