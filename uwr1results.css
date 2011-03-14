@@ -12,9 +12,42 @@
 /**
  * sidebar widget
  */
-
-
-
+.res_entry {
+	margin-bottom:5px;
+	border-bottom:1px solid #eee;
+	clear:both;
+	overflow:auto;
+}
+/*.res_entry .date,*/
+.res_entry .league,
+.res_entry .teams {
+	float:left;
+}
+.res_entry .user,
+.res_entry .goals {
+	float:right;
+}
+/*.res_entry .date,*/
+.res_entry .teams {
+	margin-left:2px;
+	clear:both;
+}
+.res_entry .user,
+.res_entry .goals {
+	margin-right:2px;
+}
+/*.res_entry .date {
+	width:4em;
+}*/
+/*.res_entry .date,*/
+.res_entry .league,
+.res_entry .user {
+	font-size:11px;
+}
+.res_entry .user {
+	font-family:Georgia,"Bitstream Vera Serif","Times New Roman",serif;
+	font-style:italic;
+}
 
 /**
  * admin views
@@ -36,7 +69,7 @@
 
 #breadcrumbs     { font-size:80%; }
 
-.index.region    { float:left; margin-right:1em; margin-bottom:1em; }
+.index.region    { font-size:14px;float:left; margin-right:1em; margin-bottom:1em; }
 
 div.ranking,
 div.matchday     { margin-bottom:1.5em; }
