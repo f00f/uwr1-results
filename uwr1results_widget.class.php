@@ -73,47 +73,70 @@ class Uwr1resultsWidget {
 		if ($linkInTitle) {
 			if ('days' == $rv['limit']) { $title .= ' (letzte '.$days.' Tage)'; }
 			if ('num' == $rv['limit'] ) { $title .= ' (letzte '.$num.' Ergebnisse)'; }
-			$title .= ' &mdash; <a class="uwr1results-icon" href="'.Uwr1resultsView::indexUrl().'">'.__('Alle Liga-Ergebnisse').' &raquo;</a>';
+			$title .= ' &mdash; <a class="uwr1results-icon" href="'.Uwr1resultsView::indexUrl().'">'.__('Alle Liga-Ergebnisse').'&nbsp;&raquo;</a>';
 		}
 
 		print str_replace('id="uwr1results"', 'id="uwr1results-widget"', $before_widget);
 		print $before_title . $title . $after_title;
 
 		if ('OK' == $rv['status']) {
-			print '<table cellspacing="0">';
-			$b1 = ($detailed ? '<b>' : '');
-			$b2 = ($detailed ? '</b>' : '');
+			if ($detailed) {
+				print '<div class="widget_recent_results">';
+			} else {
+				print '<table cellspacing="0" class="widget_recent_results">';
+			}
+			//$b1 = ($detailed ? '<b>' : '');
+			//$b2 = ($detailed ? '</b>' : '');
 			foreach($rv['result'] as $r) {
 				if ($detailed) {
 					$user_info = get_userdata($r->user_ID);
+					print '<div class="res_entry">'
+							//.'<div class="date">'.date("d.m.", strtotime($r->result_modified)) . '</div>'
+							.'<div class="league">'
+								.str_replace(' ', '&nbsp;', /*str_replace(array('Nord', 'Süd', 'West'), array('N', 'S', 'W'),*/ $r->league_short_name/*)*/)
+							.'</div>'
+							.'<div class="user">von '
+							// TODO: create profile link
+							.self::GetAuthorLink($r->user_ID)
+							//.$user_info->display_name
+							.' am '
+							.date("d.m.", strtotime($r->result_modified))
+							.'</div>'
+							. '<div class="teams">'
+								. '<a href="'.Uwr1resultsView::resultsPageUrl($r->league_slug, $r->region_ID).'#fid='.$r->fixture_ID.'" class="uwr1results_widget uwr1results-icon">'
+								. $r->team_b_name . ' &mdash; ' . $r->team_w_name
+								. '</a>'
+							. '</div>'
+							. '<div class="goals">'
+								.'<b>'.$r->result_goals_b.'</b>'.' : '.'<b>'.$r->result_goals_w.'</b>'
+							.'</div>'
+						. '</div>';
+				} else {
+					print '<tr>'//.print_r($r, true)
+						. '<td>'
+						. '<a href="'.Uwr1resultsView::resultsPageUrl($r->league_slug, $r->region_ID).'#fid='.$r->fixture_ID.'" class="uwr1results_widget uwr1results-icon">'
+						. $r->team_b_name . ' &mdash; ' . $r->team_w_name
+						. '</a>&nbsp;'
+						. '</td>'
+						. '<td align="center">'.$b1.$r->result_goals_b.$b2.'</td>'
+						. '<td>:</td>'
+						. '<td align="center">'.$b1.$r->result_goals_w.$b2.'</td>' 
+						. '</tr>';
+					}
+			}
+			if ($detailed) {
+				// TODO: Add link if !$linkInTitle
+				print '</div>';
+			} else {
+				if (!$linkInTitle) {
+					print '<tr>'
+						. '<td colspan="3">'
+						. '<a class="uwr1results-icon" href="'.Uwr1resultsView::indexUrl().'">'.__('Alle Liga-Ergebnisse').'</a>'
+						. '</td>'
+						. '</tr>';
 				}
-				print '<tr>'//.print_r($r, true)
-					. ($detailed ? '<td class="date">'.date("d.m.", strtotime($r->result_modified)) . ':&nbsp;</td>' : '')
-					. '<td>'
-					. '<a href="'.Uwr1resultsView::resultsPageUrl($r->league_slug, $r->region_ID).'#fid='.$r->fixture_ID.'" class="uwr1results_widget uwr1results-icon">'
-					. $r->team_b_name . ' &mdash; ' . $r->team_w_name
-					. '</a>&nbsp;'
-					. '</td>'
-					. '<td align="center">'.$b1.$r->result_goals_b.$b2.'</td>'
-					. '<td>:</td>'
-					. '<td align="center">'.$b1.$r->result_goals_w.$b2.'</td>' 
-					. ($detailed ? 
-						'<td>&nbsp;</td><td>('
-						. $user_info->display_name
-						. ' in '
-						. $r->league_short_name
-						. ')</td>'
-						: '')
-					. '</tr>';
+				print '</table>';
 			}
-			if (!$linkInTitle) {
-				print '<tr>'
-					. '<td colspan="3">'
-					. '<a class="uwr1results-icon" href="'.Uwr1resultsView::indexUrl().'">'.__('Alle Liga-Ergebnisse').'</a>'
-					. '</td>'
-					. '</tr>';
-			}
-			print '</table>';
 		}
 		else
 		{
@@ -126,6 +149,29 @@ class Uwr1resultsWidget {
 				. '</td></tr></table>';
 		}
 		print $after_widget;
+	}
+
+	/**
+	* Wrapper for WP author data
+	* TODO: Make it work for anon comment-posters, too
+	*/
+	function GetAuthorLink( $user_id ) {
+		if (!absint($user_id)) {
+			return '';
+		}
+		global $authordata;
+		$authordata = get_userdata( $user_id );
+		return get_the_author();
+
+		/* from: author-template.php::the_author_posts_link() */
+/*
+		return sprintf(
+			'<a href="%1$s" title="%2$s">%3$s</a>',
+			get_author_posts_url( $authordata->ID, $authordata->user_	),
+			esc_attr( sprintf( __( 'Posts by %s' ), get_the_author() ) ),
+			get_the_author()
+		);
+*/
 	}
 
 	function controlPanel() {
