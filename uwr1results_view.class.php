@@ -156,6 +156,13 @@ class Uwr1resultsView {
 		return $link;
 	}
 
+	function adminScripts() {
+		wp_enqueue_script('hoverIntent');
+		wp_enqueue_script('common');
+		wp_enqueue_script('jquery-color');
+		//die('scripts inserted');
+	}
+
 	/**
 	 * Puts the Uwr1results management link in the manage submenu
 	 */
@@ -163,7 +170,8 @@ class Uwr1resultsView {
 		// TODO: This does not only create the menu, it also (only?) *does* sth. with the entries.
 		//       But those actions must be done before the menu is created (due to the redirects).
 		//       !Split the function!
-		add_submenu_page('edit.php', __('UWR Ergebnisse'), __('UWR Ergebnisse'), 'edit_posts', 'uwr1results', array('Uwr1resultsController', 'adminAction'));
+		$page = add_submenu_page('admin.php', __('UWR Ergebnisse'), __('UWR Ergebnisse'), 'edit_posts', 'uwr1results', array('Uwr1resultsController', 'adminAction'));
+		add_action( 'admin_print_scripts-' . $page, array('Uwr1resultsView', 'adminScripts') );
 	}
 
 	/**
@@ -242,7 +250,7 @@ class Uwr1resultsView {
 	}
 
 	static function poweredBy() {
-		print '<div class="rs-footer" style="clear:both; padding-top:2em;">powered by <a href="http://uwr1.de/">uwr1results ' . UWR1RESULTS_VERSION . '</a>.</div>';
+		print '<div class="rs-footer" style="clear:both; padding-top:2em;">powered by <a href="'.self::indexUrl().'">uwr1results ' . UWR1RESULTS_VERSION . '</a>.</div>';
 	}
 
 	public static function editLink( $params ) {
@@ -267,7 +275,7 @@ class Uwr1resultsView {
 		if ($params['tournament']) {
 			$path .= '/turnier/' . $params['tournament'] . '/';
 		}
-		$link = Uwr1resultsView::indexUrl() . $path;
+		$link = self::indexUrl() . $path;
 		return $link;
 	}
 
@@ -276,11 +284,11 @@ class Uwr1resultsView {
 	}
 
 	private static function leagueUrl(&$slug) {
-		return Uwr1resultsView::indexUrl() . '/liga/'.urlencode($slug);
+		return self::indexUrl() . '/liga/'.urlencode($slug);
 	}
 
 	private static function tournamentUrl(&$slug) {
-		return Uwr1resultsView::indexUrl() . '/turnier/'.urlencode($slug);
+		return self::indexUrl() . '/turnier/'.urlencode($slug);
 	}
 
 	/**
@@ -302,17 +310,17 @@ class Uwr1resultsView {
 		}
 
 		if ($regionId < 0) {
-			return Uwr1resultsView::tournamentUrl($slug);
+			return self::tournamentUrl($slug);
 		}
 		if ($regionId > 0) {
-			return Uwr1resultsView::leagueUrl($slug);
+			return self::leagueUrl($slug);
 		} else {
 			trigger_error(get_class() . '::resultsPageUrl: Invalid parameter value.', E_USER_WARNING);
 		}
 	}
 
 	public static function ajaxUrl($view, $param=null) {
-		return Uwr1resultsView::indexUrl() . '/ajax/'.urlencode($view).'/'
+		return self::indexUrl() . '/ajax/'.urlencode($view).'/'
 			. ( (!is_null($param) && is_string($param)) ? urlencode($param).'/' : '');
 	}
 } // Uwr1resultsView

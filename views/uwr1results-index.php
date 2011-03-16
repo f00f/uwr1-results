@@ -5,7 +5,6 @@ Plugin URI: http://uwr1.de/
 Description: TODO
 Author: Hannes Hofmann
 Author URI: http://uwr1.de/
-Version: 0.1
 */
 
 $season = Uwr1resultsController::season();
@@ -14,20 +13,18 @@ $regions =& Uwr1resultsModelRegion::instance()->findBySeason( $season );
 get_header();
 //<div class="primary" id="content">
 ?>
-	<div id="league_page" class="wrap_content">
-	<div class="post">
-	<p class="update">Dieser Teil von <a href="http://uwr1.de/" title="Unterwasserrugby">uwr1.de</a> befindet sich noch in der Entwicklung. Es kann deshalb passieren, dass noch Fehler auftreten.</p>
+	<div id="league_page" class="uwr1results-view wrap_content has_sidebar">
+	<div class="post-v2">
 	<?php
-
 	$title = Uwr1resultsView::title('');
-	print '<h2 class="posttitle">'
+	print '<h1 class="entry-title">'
 		.'<a href="'.Uwr1resultsView::indexUrl().'" rel="bookmark" title="Permanenter Link zu '.$title.'">'
-		.$title.'</a></h2>';
+		.$title.'</a></h1>';
 	// todo: use get_permalink (plug it)
-	
+
 	// breadcrumbs
 	print '<div id="breadcrumbs">Du bist hier: <a href="'.Uwr1resultsView::indexUrl().'">UWR Ergebnisse</a></div><br />';
-
+	//<p class="notice">Dieser Teil von <a href="http://uwr1.de/" title="Unterwasserrugby">uwr1.de</a> befindet sich noch in der Entwicklung. Es kann deshalb passieren, dass noch Fehler auftreten.</p>
 /*
 global $wp_query;
 print '<hr />';
@@ -49,7 +46,7 @@ print '<hr />';
 				print '<br style="clear:both;" /><hr style="margin-top:1.3em; margin-bottom:1.3em;" />';
 			}
 			print '<div class="uwr1results index region">';
-			print '<h4>' . $r->region_name . '</h4>';
+			print '<h2 class="entry-title">' . $r->region_name . '</h2>';
 
 			$currentRegion = $r->region_ID;
 		}

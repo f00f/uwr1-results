@@ -5,7 +5,6 @@ Plugin URI: http://uwr1.de/
 Description: TODO
 Author: Hannes Hofmann
 Author URI: http://uwr1.de/
-Version: 0.1
 */
 
 function print_ranking(&$ranking) {
@@ -93,14 +92,14 @@ if ( !$tournament->found() ) {
 $printDebug = (1 == $GLOBALS['current_user']->ID);
 //<div class="primary" id="content">
 ?>
-	<div id="tournament_page" class="wrap_content">
-	<div class="post">
-	<p class="update">Dieser Teil von <a href="http://uwr1.de/" title="Unterwasserrugby">uwr1.de</a> befindet sich noch in der Entwicklung. Es kann deshalb passieren, dass noch Fehler auftreten.</p>
+	<div id="tournament_page" class="uwr1results-view wrap_content has_sidebar">
+	<div class="post-v2">
 	<?php
+	//<p class="notice">Dieser Teil von <a href="http://uwr1.de/" title="Unterwasserrugby">uwr1.de</a> befindet sich noch in der Entwicklung. Es kann deshalb passieren, dass noch Fehler auftreten.</p>
 	$title = Uwr1resultsView::title('');
-	print '<h2 class="posttitle">'
+	print '<h1 class="entry-title">'
 		.'<a href="'.get_permalink().'" rel="bookmark" title="Permanenter Link zu '.$title.'">'
-		.$title.'</a></h2>';
+		.$title.'</a></h1>';
 	
 	// breadcrumbs
 	print '<div id="breadcrumbs">Du bist hier: <a href="'.Uwr1resultsView::indexUrl().'" title="Unterwasserrugby Ergebnisse">UWR Ergebnisse</a> &raquo; '
