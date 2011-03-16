@@ -14,6 +14,7 @@
  */
 .res_entry {
 	margin-bottom:5px;
+	padding-bottom:2px;
 	border-bottom:1px solid #eee;
 	clear:both;
 	overflow:auto;
