@@ -92,6 +92,14 @@ class Uwr1resultsWidget {
 					$user_info = get_userdata($r->user_ID);
 					print '<div class="res_entry">'
 							//.'<div class="date">'.date("d.m.", strtotime($r->result_modified)) . '</div>'
+							. '<div class="teams">'
+								. '<a href="'.Uwr1resultsView::resultsPageUrl($r->league_slug, $r->region_ID).'#fid='.$r->fixture_ID.'" class="uwr1results_widget uwr1results-icon">'
+								. $r->team_b_name . ' &mdash; ' . $r->team_w_name
+								. '</a>'
+							. '</div>'
+							. '<div class="goals">'
+								.'<b>'.$r->result_goals_b.'</b>'.' : '.'<b>'.$r->result_goals_w.'</b>'
+							.'</div>'
 							.'<div class="league">'
 								.str_replace(' ', '&nbsp;', /*str_replace(array('Nord', 'Süd', 'West'), array('N', 'S', 'W'),*/ $r->league_short_name/*)*/)
 							.'</div>'
@@ -101,14 +109,6 @@ class Uwr1resultsWidget {
 							//.$user_info->display_name
 							.' am '
 							.date("d.m.", strtotime($r->result_modified))
-							.'</div>'
-							. '<div class="teams">'
-								. '<a href="'.Uwr1resultsView::resultsPageUrl($r->league_slug, $r->region_ID).'#fid='.$r->fixture_ID.'" class="uwr1results_widget uwr1results-icon">'
-								. $r->team_b_name . ' &mdash; ' . $r->team_w_name
-								. '</a>'
-							. '</div>'
-							. '<div class="goals">'
-								.'<b>'.$r->result_goals_b.'</b>'.' : '.'<b>'.$r->result_goals_w.'</b>'
 							.'</div>'
 						. '</div>';
 				} else {
