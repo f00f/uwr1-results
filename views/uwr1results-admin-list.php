@@ -22,7 +22,7 @@ $regions = Uwr1resultsModelRegion::instance()->findBySeason(/*$season*/);
  */
 
 print '<div class="wrap">';
-print '<h2>'.__('Manage Leagues and League Results').'</h2>';
+print '<h2>'.__('UWR Ligen und Ergebnisse').'</h2>';
 
 $currentRegion = 0;
 foreach($regions as $r) {
@@ -35,10 +35,11 @@ foreach($regions as $r) {
 			'region_id' => $r->region_ID,
 //			'season' => Uwr1resultsCont...,
 			));
-		print '<h4>'
+		print '<h3>'
+			. (('Turniere' != $r->region_name && 'Jugend' != $r->region_name) ? 'SB ' : '')
 			. $r->region_name
 //			. ' <small style="font-weight:normal;">[<a class="disfunct" href="'.$editLink.'">'.__('Edit').'</a>]</small>'
-			. '</h4>'
+			. '</h3>'
 			.'<ul>';
 		$currentRegion = $r->region_ID;
 	}
