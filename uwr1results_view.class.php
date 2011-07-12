@@ -170,7 +170,8 @@ class Uwr1resultsView {
 		// TODO: This does not only create the menu, it also (only?) *does* sth. with the entries.
 		//       But those actions must be done before the menu is created (due to the redirects).
 		//       !Split the function!
-		$page = add_submenu_page('admin.php', __('UWR Ergebnisse'), __('UWR Ergebnisse'), 'edit_posts', 'uwr1results', array('Uwr1resultsController', 'adminAction'));
+		//$page = add_submenu_page('admin.php', __('UWR Ergebnisse'), __('UWR Ergebnisse'), 'edit_posts', 'uwr1results', array('Uwr1resultsController', 'adminAction'));
+		$page = add_submenu_page('uwr1menu', __('UWR Ergebnisse'), __('UWR Ergebnisse'), 'edit_posts', 'uwr1results', array('Uwr1resultsController', 'adminAction'));
 		add_action( 'admin_print_scripts-' . $page, array('Uwr1resultsView', 'adminScripts') );
 	}
 
@@ -212,7 +213,6 @@ class Uwr1resultsView {
 		// TODO: look in theme folder!
 		$template = 'views/uwr1results-'.$view.'.php';
 		$rv = @require_once $template;
-		exit;
 	}
 	
 	/**
@@ -254,8 +254,7 @@ class Uwr1resultsView {
 	}
 
 	public static function editLink( $params ) {
-		$link = get_bloginfo('wpurl') . '/wp-admin/edit.php'
-			. '?page=uwr1results';
+		$link = admin_url('admin.php?page=uwr1results');
 		foreach ($params as $k => $v) {
 			$link .= '&'.urlencode($k).'='.urlencode($v);
 		}

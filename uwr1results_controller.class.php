@@ -155,7 +155,7 @@ class Uwr1resultsController {
 	//       !Split the function!
 	function adminAction() {
 		$title = __('Uwr1results');
-		$parent_file = 'edit.php';
+		$parent_file = 'admin.php';
 		
 		$action   = !empty($_REQUEST['action'])
 				? $_REQUEST['action']
@@ -405,7 +405,7 @@ class Uwr1resultsController {
 	 * // TODO: write better comment
 	 */
 	static function isUwr1resultsAdminUrl() {
-		return ('edit.php' == basename($_SERVER['SCRIPT_NAME']) && 'uwr1results' == $_GET['page']);
+		return ('admin.php' == basename($_SERVER['SCRIPT_NAME']) && 'uwr1results' == $_GET['page']);
 	}
 
 	/**
