@@ -22,16 +22,13 @@
 /*.res_entry .date,*/
 .res_entry .league,
 .res_entry .teams {
+	clear:both;
 	float:left;
+	margin-left:2px;
 }
 .res_entry .user,
 .res_entry .goals {
 	float:right;
-}
-/*.res_entry .date,*/
-.res_entry .teams {
-	margin-left:2px;
-	clear:both;
 }
 .res_entry .user,
 .res_entry .goals {
