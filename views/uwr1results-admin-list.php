@@ -139,10 +139,10 @@ foreach ($events as $event) {
 		$editLink = false;
 		$deleteLink = false;
 		if ( current_user_can('edit_post', $event->event_id) ) {
-			$editLink = "edit.php?page=kalenter&amp;action=edit&amp;event_id={$event->event_id}";
+			$editLink = "admin.php?page=kalenter&amp;action=edit&amp;event_id={$event->event_id}";
 		}
 		if ( current_user_can('delete_post', $event->event_id) ) {
-			$deleteLink = "edit.php?page=kalenter&amp;action=delete&amp;event_id={$event->event_id}";
+			$deleteLink = "admin.php?page=kalenter&amp;action=delete&amp;event_id={$event->event_id}";
 			if ( function_exists('wp_nonce_url') ) {
 				$deleteLink = wp_nonce_url($deleteLink, 'kalenter-delete_' . $event->event_id);
 			}
