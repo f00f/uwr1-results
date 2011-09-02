@@ -29,7 +29,7 @@ define('UWR1RESULTS_PAGE_ID_LEAGUE_PX',     UWR1RESULTS_PAGE_ID_PX.'76'); // 76 
 define('UWR1RESULTS_PAGE_ID_TOURNAMENT_PX', UWR1RESULTS_PAGE_ID_PX.'84'); // 76 = hexdec(bin2hex('L'))
 //define('UWR1RESULTS_PAGE_ID_LEAGUE', UWR1RESULTS_PAGE_ID_PREFIX.'76'.LEAGUE_ID); // 76 = hexdec(bin2hex('L'))
 
-define('UWR1RESULTS_SEASON', 2010);
+define('UWR1RESULTS_SEASON', 2011);
 define('UWR1RESULTS_TOURNAMENT_REGION', -1);
 
 define('UWR1RESULTS_JSON_CACHE_URL', 'http://uwr1cdn.appspot.com/jc/json');
@@ -62,7 +62,7 @@ require_once 'uwr1results_model_team.class.php';
 $RUL_HARDCODED = array(
 //	'view' => 'league',
 	'view' => 'index',
-	'season' => '2009',
+	'season' => '2011',//unused?
 ); // HARDCODED
 
 

@@ -385,6 +385,7 @@ SQL;
 		////////////////////////////////////////////////////////////////
 		// find the last $args['num'] results
 		
+		$beginOfSeason = UWR1RESULTS_SEASON . '-09-01';
 		// `f`.* MUST be placed after `r`.* otherwise r.fixture_ID (which may be NULL) overwrites f.fixture_ID
  		$sql = "SELECT `r`.`result_modified`, `r`.`user_ID`, `r`.`fixture_ID`, `r`.`result_goals_b`, `r`.`result_goals_w`, `m`.`matchday_date`, `l`.`league_short_name`, `l`.`league_slug`, `l`.`region_ID`,"
  			. " `t_b`.`team_name` AS `team_b_name`,"
@@ -400,6 +401,7 @@ SQL;
 //			. " 	OR"
 //			. " 	`r`.`result_ID` = (SELECT `r2`.`result_ID` FROM `{$resultsTable}` AS `r2` WHERE `r2`.`fixture_ID` = `f`.`fixture_ID` ORDER BY `r2`.`result_modified` DESC LIMIT 1)"
 //			. " )"
+			. " WHERE `r`.`result_modified` >= '{$beginOfSeason}'"
 			. " ORDER BY `r`.`result_modified` DESC"
 			. " LIMIT 0, {$args['num']}"
 			;
@@ -407,9 +409,16 @@ SQL;
 		// TODO: think about using $this->_wpdb->get_row();
 		// OBJECT, ARRAY_A, ARRAY_N
 
-		$ret['status'] = 'OK';
-		$ret['limit']  = 'num';
-		$ret['result'] = $this->_wpdb->get_results($sql);
+		$this->_wpdb->get_results($sql);
+
+		if ($this->_wpdb->num_rows >= $args['num']) {
+			$ret['status'] = 'OK';
+			$ret['limit']  = 'num';
+			$ret['result'] = $this->_wpdb->last_result;
+			return $ret;
+		}
+
+		$ret['status'] = 'ZERO_RESULTS';
 		return $ret;
 	}
 
