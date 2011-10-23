@@ -411,7 +411,7 @@ SQL;
 
 		$this->_wpdb->get_results($sql);
 
-		if ($this->_wpdb->num_rows >= $args['num']) {
+		if ($this->_wpdb->num_rows > 0) {
 			$ret['status'] = 'OK';
 			$ret['limit']  = 'num';
 			$ret['result'] = $this->_wpdb->last_result;
