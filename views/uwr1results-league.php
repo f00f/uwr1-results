@@ -87,12 +87,10 @@ get_header();
 global $league;
 global $printDebug;
 
-$region =& Uwr1resultsModelRegion::instance();
 $league =& Uwr1resultsModelLeague::instance();
 if ( !$league->found() ) {
 	new Uwr1resultsException('Liga nicht gefunden.');
 }
-$region->findById( $league->regionId() );
 
 $printDebug = (1 == $GLOBALS['current_user']->ID);
 //<div class="primary" id="content">
