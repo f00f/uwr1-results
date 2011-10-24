@@ -38,16 +38,16 @@ extends Uwr1resultsModel {
 	}
 
 	protected function init() {
-		$this->_table = UWR1RESULTS_TBL_REGIONS;
+		//$this->table = UWR1RESULTS_TBL_REGIONS;
 	}
 
 	/**
 	 * Create the database table.
 	 */
 	public function createTable() {
-		$uwr1resultsTable = $this->table();
+		$regionsTable = parent::getTable(get_class($this));
 		$sql = <<<SQL
-CREATE TABLE IF NOT EXISTS `{$uwr1resultsTable}` (
+CREATE TABLE IF NOT EXISTS `{$regionsTable}` (
 	`region_ID`    INT(11) NOT NULL auto_increment,
 	`region_name`  VARCHAR(50) collate utf8_general_ci NOT NULL default '',
 	`region_slug`  VARCHAR(50) collate utf8_general_ci NOT NULL default '',
@@ -68,8 +68,8 @@ SQL;
 			$season = Uwr1resultsController::season();
 		}
 
-		$regionsTable   = $this->table();
-		$leaguesTable   = Uwr1resultsModelLeague::instance()->table();
+		$regionsTable   = parent::getTable(get_class($this));
+		$leaguesTable   = parent::getTable('Uwr1resultsModelLeague');
 
  		$this->_wpdb->show_errors();
 
@@ -81,4 +81,5 @@ SQL;
 		return $this->_wpdb->get_results($sql);
 	}
 } // Uwr1resultsModelRegion
+Uwr1resultsModelRegion::initTable('Uwr1resultsModelRegion', UWR1RESULTS_TBL_REGIONS);
 ?>

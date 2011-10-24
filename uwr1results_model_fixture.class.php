@@ -7,6 +7,7 @@ Author URI: http://uwr1.de/
 
 require_once 'uwr1res_config.inc.php';
 
+
 class Uwr1resultsModelFixture
 extends Uwr1resultsModel {
 	protected $dbMapping = array(
@@ -46,16 +47,16 @@ extends Uwr1resultsModel {
 	}
 
 	protected function init() {
-		$this->_table = UWR1RESULTS_TBL_FIXTURES;
+		//$this->table = UWR1RESULTS_TBL_FIXTURES;
 	}
 
 	/**
 	 * Create the database table.
 	 */
 	public function createTable() {
-		$uwr1resultsTable = $this->table();
+		$fixturesTable = parent::getTable(get_class($this));
 		$sql = <<<SQL
-CREATE TABLE IF NOT EXISTS `{$uwr1resultsTable}` (
+CREATE TABLE IF NOT EXISTS `{$fixturesTable}` (
 	`fixture_ID`          int(11) NOT NULL auto_increment,
 	`matchday_ID`         int(11) NOT NULL default '0',
 	`fixture_order`       tinyint(4) NOT NULL default '0',
@@ -104,7 +105,7 @@ SQL;
 				$t->save();
 				$team =& $t->findByName( $f['team_blue'] );
 				if (false === $team) {
-					$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . $this->table());
+					$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . parent::getTable(get_class($this)));
 					die('error creating team '.$f['team_blue']);
 				}
 			}
@@ -120,7 +121,7 @@ SQL;
 				$t->save();
 				$team =& $t->findByName( $f['team_white'] );
 				if (false === $team) {
-					$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . $this->table());
+					$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . parent::getTable(get_class($this)));
 					die('error creating team '.$f['team_white']);
 				}
 			}
@@ -148,13 +149,13 @@ SQL;
 			));
 			$rv = $this->save(false); // don't notifyJsonCache for each store
 			if (false === $rv) {
-				$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . $this->table());
+				$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . parent::getTable(get_class($this)));
 				return false;
 			}
 		}
 
 		// eventually update cache
-		$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . $this->table());
+		$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . parent::getTable(get_class($this)));
 
 		return true;
 	} // saveMany
@@ -169,8 +170,8 @@ SQL;
 		
 		$id = intval($id);
 		
-		$fixturesTable  = $this->table();
-		$teamsTable     = Uwr1resultsModelTeam::instance()->table();
+		$fixturesTable  = parent::getTable(get_class($this));
+		$teamsTable     = parent::getTable('Uwr1resultsModelTeam');
 		
 		$sql = "SELECT `f`.*, `t_b`.`team_name` AS `team_blue`, `t_w`.`team_name` AS `team_white` FROM `{$fixturesTable}` AS `f`"
 			. " LEFT JOIN `{$teamsTable}` AS `t_b` ON `t_b`.`team_ID` = `f`.`fixture_team_blue`"
@@ -186,9 +187,9 @@ SQL;
 			exit;
 		}
 
-		$fixturesTable  = $this->table();
-		$teamsTable     = Uwr1resultsModelTeam::instance()->table();
-		$resultsTable   = Uwr1resultsModelResult::instance()->table();
+		$fixturesTable  = parent::getTable(get_class($this));
+		$teamsTable     = parent::getTable('Uwr1resultsModelTeam');
+		$resultsTable   = parent::getTable('Uwr1resultsModelResult');
 
 		// `f`.* MUST be placed after `r`.* otherwise r.fixture_ID (which may be NULL) overwrites f.fixture_ID
  		$sql = "SELECT `r`.*, `f`.*,"
@@ -226,4 +227,5 @@ SQL;
 		return $this;
 	}
 } // Uwr1resultsModelFixture
+Uwr1resultsModelFixture::initTable('Uwr1resultsModelFixture', UWR1RESULTS_TBL_FIXTURES);
 ?>

@@ -48,16 +48,16 @@ extends Uwr1resultsModel {
 	}
 
 	protected function init() {
-		$this->_table = UWR1RESULTS_TBL_RESULTS;
+		//$this->table = UWR1RESULTS_TBL_RESULTS;
 	}
 
 	/**
 	 * Create the database table.
 	 */
 	public function createTable() {
-		$uwr1resultsTable = $this->table();
+		$resultsTable = parent::getTable(get_class($this));
 		$sql = <<<SQL
-CREATE TABLE IF NOT EXISTS `{$uwr1resultsTable}` (
+CREATE TABLE IF NOT EXISTS `{$resultsTable}` (
 	`result_ID` int(11) NOT NULL auto_increment,
 	`fixture_ID` int(11) NOT NULL default '0',
 	`user_ID` int(11) NOT NULL default '0',
@@ -153,30 +153,30 @@ SQL;
 				'fixtureId'         => $f['id'],
 				'userId'            => $current_user->ID,
 				'modified'          => 'NOW()',
-				'goalsBlue'         => 0  + $f['goals_blue'],
-				'goalsWhite'        => 0  + $f['goals_white'],
-				'goalsHalfBlue'     => 0  + $f['goals_half_blue'],
-				'goalsHalfWhite'    => 0  + $f['goals_half_white'],
-				'goalsRegularBlue'  => 0  + $f['goals_regular_blue'],
-				'goalsRegularWhite' => 0  + $f['goals_regular_white'],
+				'goalsBlue'         => 0 + $f['goals_blue'],
+				'goalsWhite'        => 0 + $f['goals_white'],
+				'goalsHalfBlue'     => 0 + $f['goals_half_blue'],
+				'goalsHalfWhite'    => 0 + $f['goals_half_white'],
+				'goalsRegularBlue'  => 0 + $f['goals_regular_blue'],
+				'goalsRegularWhite' => 0 + $f['goals_regular_white'],
 				'comment'           => '' . $f['comment'],
 			));
 			$rv = $this->save(false); // don't notifyJsonCache for each store
 			if (false === $rv) {
-				$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . $this->table());
+				$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . parent::getTable(get_class($this)));
 				return false;
 			}
 		}
 
 		// eventually update cache
-		$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . $this->table());
+		$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . parent::getTable(get_class($this)));
 
 		return true;
 	} // saveMany
 
 	public function save() {
 		Uwr1resultsHelper::enforcePermission( 'save' );
-
+		
 		$this->updatePoints();
 
 		// escape and quote $comment
@@ -191,13 +191,13 @@ SQL;
 		$fieldsStr = "`" . implode("`, `", $fields) . "`";
 		$valuesStr = implode(", ", $values);
 /*		
-		$sql = 'REPLACE INTO `'.$this->table().'`'
+		$sql = 'REPLACE INTO `'.parent::getTable(get_class($this)).'`'
 			. ' (`fixture_ID`, `user_ID`, `result_modified`, `result_goals_b`, `result_goals_w`)'
 			. ' VALUES'
 			. ' (' . $this->fixtureId() . ', ' . intval($current_user) . ', NOW(), ' . intval($_POST['goalsBlue']) . ', ' . intval($_POST['goalsWhite']) . ')';
 */
 		// For now: only one result per game: resultId == fixtureId
-		$sql = 'REPLACE INTO `'.$this->table().'`'
+		$sql = 'REPLACE INTO `'.parent::getTable(get_class($this)).'`'
 			. " ({$fieldsStr})"
 			. ' VALUES'
 			. " ({$valuesStr})";
@@ -217,7 +217,7 @@ SQL;
 			exit;
 		}
 
-		$resultsTable = $this->table();
+		$resultsTable = parent::getTable(get_class($this));
 
 		$sql = "SELECT * FROM `{$resultsTable}` AS `r`"
 			. " WHERE `r`.`fixture_ID` = '{$fixtureId}'"
@@ -228,10 +228,10 @@ SQL;
 	}
 /*
 	public function findByMatchdayId( $matchdayId ) {
-		$resultsTable   = $this->table();
-		$matchdaysTable = Uwr1resultsModelMatchday::instance()->table();
-		$fixturesTable  = Uwr1resultsModelFixture::instance()->table();
-		$teamsTable     = Uwr1resultsModelTeam::instance()->table();
+		$resultsTable   = parent::getTable(get_class($this));
+		$matchdaysTable = parent::getTable('Uwr1resultsModelMatchday');
+		$fixturesTable  = parent::getTable('Uwr1resultsModelFixture');
+		$teamsTable     = parent::getTable('Uwr1resultsModelTeam');
 
 		// `f`.* MUST be placed after `r`.* otherwise r.fixture_ID (which may be NULL) overwrites f.fixture_ID
  		$sql = "SELECT `r`.*, `f`.*, `m`.*,"
@@ -258,10 +258,10 @@ SQL;
 	}
 */
 	public function findByLeagueId( $leagueId, $seasonId = 0 ) {
-		$resultsTable   = $this->table();
-		$matchdaysTable = Uwr1resultsModelMatchday::instance()->table();
-		$fixturesTable  = Uwr1resultsModelFixture::instance()->table();
-		$teamsTable     = Uwr1resultsModelTeam::instance()->table();
+		$resultsTable   = parent::getTable(get_class($this));
+		$matchdaysTable = parent::getTable('Uwr1resultsModelMatchday');
+		$fixturesTable  = parent::getTable('Uwr1resultsModelFixture');
+		$teamsTable     = parent::getTable('Uwr1resultsModelTeam');
 		if (!$seasonId) $seasonId = Uwr1resultsController::season();
 
 		// `f`.* MUST be placed after `r`.* otherwise r.fixture_ID (which may be NULL) overwrites f.fixture_ID
@@ -290,10 +290,10 @@ SQL;
 	}
 
 	public function findByTournamentId( $tournamentId ) {
-		$resultsTable   = $this->table();
-		$matchdaysTable = Uwr1resultsModelMatchday::instance()->table();
-		$fixturesTable  = Uwr1resultsModelFixture::instance()->table();
-		$teamsTable     = Uwr1resultsModelTeam::instance()->table();
+		$resultsTable   = parent::getTable(get_class($this));
+		$matchdaysTable = parent::getTable('Uwr1resultsModelMatchday');
+		$fixturesTable  = parent::getTable('Uwr1resultsModelFixture');
+		$teamsTable     = parent::getTable('Uwr1resultsModelTeam');
 
 		// `f`.* MUST be placed after `r`.* otherwise r.fixture_ID (which may be NULL) overwrites f.fixture_ID
  		$sql = "SELECT `r`.*, `f`.*, `m`.*,"
@@ -338,11 +338,11 @@ SQL;
 		// set default values
 		if (!@$args['num'])  { $args['num']  = 5; }
 
-		$resultsTable   = $this->table();
-		$matchdaysTable = Uwr1resultsModelMatchday::instance()->table();
-		$fixturesTable  = Uwr1resultsModelFixture::instance()->table();
-		$teamsTable     = Uwr1resultsModelTeam::instance()->table();
-		$leaguesTable   = Uwr1resultsModelLeague::instance()->table();
+		$resultsTable   = parent::getTable(get_class($this));
+		$matchdaysTable = parent::getTable('Uwr1resultsModelMatchday');
+		$fixturesTable  = parent::getTable('Uwr1resultsModelFixture');
+		$teamsTable     = parent::getTable('Uwr1resultsModelTeam');
+		$leaguesTable   = parent::getTable('Uwr1resultsModelLeague');
 
 		$ret = array();
 		$ret['status'] = 'empty';
@@ -423,4 +423,5 @@ SQL;
 	}
 
 } // Uwr1resultsModelResult
+Uwr1resultsModelResult::initTable('Uwr1resultsModelResult', UWR1RESULTS_TBL_RESULTS);
 ?>

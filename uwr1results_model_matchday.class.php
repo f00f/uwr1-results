@@ -46,16 +46,16 @@ extends Uwr1resultsModel {
 	}
 
 	protected function init() {
-		$this->_table = UWR1RESULTS_TBL_MATCHDAYS;
+		//$this->table = UWR1RESULTS_TBL_MATCHDAYS;
 	}
 
 	/**
 	 * Create the database table.
 	 */
 	public function createTable() {
-		$uwr1resultsTable =& $this->table();
+		$matchdaysTable =& parent::getTable(get_class($this));
 		$sql = <<<SQL
-CREATE TABLE IF NOT EXISTS `{$uwr1resultsTable}` (
+CREATE TABLE IF NOT EXISTS `{$matchdaysTable}` (
 	`matchday_ID` int(11) NOT NULL auto_increment,
 	`league_ID` int(11) NOT NULL default '0',
 	`season_ID` int(11) NOT NULL default '0',
@@ -117,13 +117,13 @@ SQL;
 			));
 			$rv = $this->save(false); // don't notifyJsonCache for each store
 			if (false === $rv) {
-				$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . $this->table());
+				$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . parent::getTable(get_class($this)));
 				return false;
 			}
 		}
 
 		// eventually update cache
-		$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . $this->table());
+		$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . parent::getTable(get_class($this)));
 
 		return true;
 	} // saveMany
@@ -132,9 +132,9 @@ SQL;
 	// FIND METHODS
 		
 	public function findByLeagueId( $leagueId, $seasonId = 0 ) {
-		$matchdaysTable = $this->table();
-		$fixturesTable  = Uwr1resultsModelFixture::instance()->table();
-		$teamsTable     = Uwr1resultsModelTeam::instance()->table();
+		$matchdaysTable = parent::getTable(get_class($this));
+		$fixturesTable  = parent::getTable('Uwr1resultsModelFixture');
+		$teamsTable     = parent::getTable('Uwr1resultsModelTeam');
 		if (!$seasonId) $seasonId = Uwr1resultsController::season();
 
 		/*
@@ -167,9 +167,9 @@ SQL;
 	}
 
 	public function findByTournamentId( $tournamentId ) {
-		$matchdaysTable = $this->table();
-		$fixturesTable  = Uwr1resultsModelFixture::instance()->table();
-		$teamsTable     = Uwr1resultsModelTeam::instance()->table();
+		$matchdaysTable = parent::getTable(get_class($this));
+		$fixturesTable  = parent::getTable('Uwr1resultsModelFixture');
+		$teamsTable     = parent::getTable('Uwr1resultsModelTeam');
 
 		$sql = "SELECT `m`.*, COUNT(`f`.`fixture_ID`) as `fixture_count`"
  			. " FROM `{$matchdaysTable}` AS `m`"
@@ -186,4 +186,5 @@ SQL;
 	}
 
 } // Uwr1resultsModelMatchday
+Uwr1resultsModelMatchday::initTable('Uwr1resultsModelMatchday', UWR1RESULTS_TBL_MATCHDAYS);
 ?>

@@ -39,16 +39,16 @@ extends Uwr1resultsModel {
 	}
 
 	protected function init() {
-		$this->_table = UWR1RESULTS_TBL_TEAMS;
+		//$this->table = UWR1RESULTS_TBL_TEAMS;
 	}
 
 	/**
 	 * Create the database table.
 	 */
 	public function createTable() {
-		$uwr1resultsTable =& $this->table();
+		$teamsTable =& parent::getTable(get_class($this));
 		$sql = <<<SQL
-CREATE TABLE IF NOT EXISTS `{$uwr1resultsTable}` (
+CREATE TABLE IF NOT EXISTS `{$teamsTable}` (
 	`team_ID`    INT(11) NOT NULL auto_increment,
 	`team_name`  VARCHAR(50) collate utf8_general_ci NOT NULL,
 	`team_slug`  VARCHAR(50) collate utf8_general_ci NOT NULL,
@@ -67,7 +67,7 @@ SQL;
 			return false;
 		}
 
-		$teamsTable = $this->table();
+		$teamsTable = parent::getTable(get_class($this));
 
 		$sql = "SELECT * FROM `{$teamsTable}`"
 			. " WHERE `team_name` = '{$name}'";
@@ -84,7 +84,7 @@ SQL;
 	public function findByLeagueId($leagueId, $season = null) {
 		$leagueId = intval($leagueId);
 
-		$teamsTable = $this->table();
+		$teamsTable = parent::getTable(get_class($this));
 		$leaguesTeamsTable = UWR1RESULTS_TBL_LEAGUES_TEAMS;
 
 		$sql = "SELECT `t`.* FROM `{$leaguesTeamsTable}` AS `lt`"
@@ -94,4 +94,5 @@ SQL;
 		return $this->_wpdb->get_results($sql);
 	}
 } // Uwr1resultsModelTeam
+Uwr1resultsModelTeam::initTable('Uwr1resultsModelTeam', UWR1RESULTS_TBL_TEAMS);
 ?>

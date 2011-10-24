@@ -22,7 +22,7 @@ class Uwr1resultsModel {
 	 * @static
 	 * @access private
 	 */
-	protected $_table='';
+	protected static $tables=array();
 	
 	/**
 	 * The instance of this object.
@@ -123,8 +123,11 @@ class Uwr1resultsModel {
 		return true;
 	}
 
-	public function table() {
-		return $this->_table;
+	public static function initTable($classname, $table) {
+        self::$tables[$classname] = $table;
+    }
+	public static function getTable($classname) {
+		return @self::$tables[$classname];
 	}
 
 	/**
@@ -170,17 +173,13 @@ class Uwr1resultsModel {
 			exit;
 		}
 
-		$thisTable = $this->table();
-
- 		$sql = "SELECT * FROM `".$this->table()."`"
+ 		$sql = "SELECT * FROM `".self::getTable(get_class($this))."`"
 			. " WHERE `{$idDbField}` = '".intval($id)."'";
 
 		return $this->findFirst($sql);
 	}
 
 	public function findAll( $params=array() ) {
-		$thisTable = $this->table();
-
 		$fields = '*';
 		$where = '';
 		$order = '';
@@ -191,7 +190,7 @@ class Uwr1resultsModel {
 		if ( is_string(@$params['where']) ) {
 			$where = ' WHERE '.$params['where'];
 		}
- 		$sql = "SELECT {$fields} FROM `".$this->table()."`"
+ 		$sql = "SELECT {$fields} FROM `".self::getTable(get_class($this))."`"
 		 	. $where
 			. $order;
 
@@ -259,7 +258,7 @@ class Uwr1resultsModel {
 		$fieldsStr = "`" . implode("`, `", $fields) . "`";
 		$valuesStr = implode(", ", $values);
 
-		$sql = 'REPLACE INTO `'.$this->table().'`'
+		$sql = 'REPLACE INTO `'.self::getTable(get_class($this)).'`'
 			. " ({$fieldsStr})"
 			. ' VALUES'
 			. " ({$valuesStr})";
@@ -267,7 +266,7 @@ class Uwr1resultsModel {
 		$res = $this->_wpdb->query($sql);
 
 		if ($notifyJsonCache) {
-			$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . $this->table());
+			$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . self::getTable(get_class($this)));
 		}
 		return $res;
 	}

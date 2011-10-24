@@ -48,16 +48,16 @@ extends Uwr1resultsModel {
 	}
 
 	protected function init() {
-		$this->_table = UWR1RESULTS_TBL_LEAGUES;
+		//$this->table = UWR1RESULTS_TBL_LEAGUES;
 	}
 
 	/**
 	 * Create the database table.
 	 */
 	public function createTable() {
-		$uwr1resultsTable = $this->table();
+		$leaguesTable = parent::getTable(get_class($this));
 		$sql = <<<SQL
-CREATE TABLE IF NOT EXISTS `{$uwr1resultsTable}` (
+CREATE TABLE IF NOT EXISTS `{$leaguesTable}` (
 	`league_ID`         int(11) NOT NULL auto_increment,
 	`region_ID`         int(11) NOT NULL default '0',
 	`league_name`       varchar(50) collate utf8_general_ci NOT NULL default '',
@@ -209,7 +209,7 @@ SQL;
 		}
 
 		$this->_wpdb->show_errors(true);
-		$leaguesTeamsTable = Uwr1resultsModelTeam::instance()->table();
+		$leaguesTeamsTable = parent::getTable('Uwr1resultsModelTeam');
 
 		// clear table
 		$sql = "DELETE FROM `{$leaguesTeamsTable}`"
@@ -232,7 +232,7 @@ SQL;
 		}
 
 		//$this->notifyJsonCache($this->leagueSlug(), __FILE__);
-		$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . $this->table());
+		$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . parent::getTable(get_class($this)));
 	}
 
 
@@ -244,8 +244,8 @@ SQL;
 		}
 
 		$id = intval($id);
-		$leaguesTable   = $this->table();
-		$regionsTable   = Uwr1resultsModelRegion::instance()->table();
+		$leaguesTable   = parent::getTable(get_class($this));
+		$regionsTable   = parent::getTable('Uwr1resultsModelRegion');
 
 		$sql = "SELECT `l`.*, `r`.* FROM `{$leaguesTable}` AS `l`"
 			. " LEFT OUTER JOIN `{$regionsTable}` AS `r` ON `r`.`region_ID` = `l`.`region_ID`"
@@ -263,8 +263,8 @@ SQL;
 		$slug = Uwr1resultsHelper::sqlEscape($slug);
 		// FIXME: make slug db-safe
 	
-		$leaguesTable   = $this->table();
-		$regionsTable   = Uwr1resultsModelRegion::instance()->table();
+		$leaguesTable   = parent::getTable(get_class($this));
+		$regionsTable   = parent::getTable('Uwr1resultsModelRegion');
 	
 	
 		$sql = "SELECT `l`.*, `r`.* FROM `{$leaguesTable}` AS `l`"
@@ -328,6 +328,7 @@ SQL;
 	}
 	
 } // Uwr1resultsModelLeague
+Uwr1resultsModelLeague::initTable('Uwr1resultsModelLeague', UWR1RESULTS_TBL_LEAGUES);
 
 // wrapper funktion
 function uwr1resLeagueRanking(&$a, &$b) {
