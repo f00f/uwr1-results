@@ -36,6 +36,12 @@ class Uwr1resultsHelper {
 	
 	public static function checkPermission( $perm='save' ) {
 		switch ( $perm ) {
+			case 'add':
+				return current_user_can(UWR1RESULTS_CAPABILITIES_ADD);
+				break;
+			case 'edit':
+				return current_user_can(UWR1RESULTS_CAPABILITIES_EDIT);
+				break;
 			case 'save':
 				return current_user_can(UWR1RESULTS_CAPABILITIES);
 				break;

@@ -204,6 +204,7 @@ SQL;
 
 	// TODO: move to ModelTeam::saveMany
 	public function saveTeams($teams) {
+		// TODO: check permissions
 		if (!$this->id || !is_array($teams) || count($teams) < 1) {
 			return false;
 		}

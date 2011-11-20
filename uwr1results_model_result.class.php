@@ -133,8 +133,6 @@ SQL;
 	public function saveMany() {
 		global $current_user;
 
-		Uwr1resultsHelper::enforcePermission( 'save' );
-
 		if (!$this->id()) {
 			if (!empty($_REQUEST['matchday_id'])) {
 				$this->set( 'id', intval($_REQUEST['matchday_id']) );
@@ -175,8 +173,38 @@ SQL;
 	} // saveMany
 
 	public function save() {
+		// TODO: check permissions
 		Uwr1resultsHelper::enforcePermission( 'save' );
+
+		// check if a result for this fixture already exists.
+		// otherwise, submitters get overwritten and that sucks.
+		$doSave = false;
+		// does this work, or does it modify $this?
+		// the latter would suck, esp. b/c we're a singleton.
+		$oldResult = $this->findById($this->id());
 		
+		// all cases where an update is needed:
+		// 1) new result (there is no old result)
+		if (!$doSave && !$oldResult) {
+			$doSave = true;
+		}
+		// 2) result changed (we optimistically assume the new one is a correction)
+		if (!$doSave &&
+				($this->goalsBlue() != $oldResult->goalsBlue()
+				|| $this->goalsWhite() != $oldResult->goalsWhite())
+			) {
+			$doSave = true;
+		}
+		// 3) comment changed and not set to empty string
+		$newComment = trim($this->comment());
+		if (!$doSave && ($this->comment() != $oldResult->comment()) && !empty($newComment)) {
+			$doSave = true;
+		}
+		unset($newComment);
+		
+		if (!$doSave) { return; }
+
+
 		$this->updatePoints();
 
 		// escape and quote $comment

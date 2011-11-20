@@ -247,6 +247,7 @@ class Uwr1resultsModel {
 
 	// @param bool notifyJsonCache: default is to send notification to JsonCache (App Engine)
 	public function save($notifyJsonCache = true) {
+		// TODO: check permissions
 		Uwr1resultsHelper::enforcePermission( 'save' );
 
 		$fields = array();

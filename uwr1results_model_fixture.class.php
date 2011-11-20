@@ -85,6 +85,7 @@ SQL;
 			return new Uwr1resultsException('No ID given');
 		}
 
+		// TODO: check permissions
 		Uwr1resultsHelper::enforcePermission( 'save' );
 
 		$t =& Uwr1resultsModelTeam::instance();

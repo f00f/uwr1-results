@@ -97,6 +97,7 @@ SQL;
 			return new Uwr1resultsException('No ID given');
 		}
 
+		// TODO: check permissions
 		Uwr1resultsHelper::enforcePermission( 'save' );
 
 		$seasonId = Uwr1resultsController::season();

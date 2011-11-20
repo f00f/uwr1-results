@@ -36,9 +36,12 @@ define('UWR1RESULTS_JSON_CACHE_URL', 'http://uwr1cdn.appspot.com/jc/json');
 define('UWR1RESULTS_JSON_CACHE_UPDATE_URL', 'http://uwr1cdn.appspot.com/jc/update');
 
 define('UWR1RESULTS_CAPABILITIES',  'read');
+// _ADD and _EDIT are yet unused as Ergebnisdienst is very open.
+define('UWR1RESULTS_CAPABILITIES_ADD',  'read');
+define('UWR1RESULTS_CAPABILITIES_EDIT',  'edit_others_posts');
 # END OF CONFIG
 
-define('UWR1RESULTS_VERSION', '1.0.5');
+define('UWR1RESULTS_VERSION', '1.0.6');
 define('UWR1RESULTS_AJAX_API_VERSION', '2');
 
 define('UWR1RESULTS_TBL_REGIONS',   UWR1RESULTS_TBL_PRE . 'regions'  );
