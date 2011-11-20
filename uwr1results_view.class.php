@@ -333,5 +333,5 @@ add_filter('wp_head', array('Uwr1resultsView', 'metaTags'));
 // Add custom permalink
 add_filter('page_link', array('Uwr1resultsView', 'replacePermalink'), 10, 2);
 // Add Uwr1results pages to admin menu
-add_action('admin_menu', array('Uwr1resultsView', 'adminMenu'));
+add_action('admin_menu', array('Uwr1resultsView', 'adminMenu'), 10);
 ?>
