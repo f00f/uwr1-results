@@ -170,9 +170,8 @@ class Uwr1resultsView {
 		// TODO: This does not only create the menu, it also (only?) *does* sth. with the entries.
 		//       But those actions must be done before the menu is created (due to the redirects).
 		//       !Split the function!
-		// show link to every registered user (i.e. 'read' permissions)
 		//$page = add_submenu_page('admin.php', __('UWR Ergebnisse'), __('UWR Ergebnisse'), 'edit_posts', 'uwr1results', array('Uwr1resultsController', 'adminAction'));
-		$page = add_submenu_page('uwr1menu', __('UWR Ergebnisse'), __('UWR Ergebnisse'), 'read', 'uwr1results', array('Uwr1resultsController', 'adminAction'));
+		$page = add_submenu_page('uwr1menu', __('UWR Ergebnisse'), __('UWR Ergebnisse'), UWR1RESULTS_CAPABILITIES, 'uwr1results', array('Uwr1resultsController', 'adminAction'));
 		add_action( 'admin_print_scripts-' . $page, array('Uwr1resultsView', 'adminScripts') );
 	}
 

@@ -35,6 +35,8 @@ define('UWR1RESULTS_TOURNAMENT_REGION', -1);
 define('UWR1RESULTS_JSON_CACHE_URL', 'http://uwr1cdn.appspot.com/jc/json');
 define('UWR1RESULTS_JSON_CACHE_UPDATE_URL', 'http://uwr1cdn.appspot.com/jc/update');
 
+define('UWR1RESULTS_CAPABILITIES',  'read');
+
 # END OF CONFIG
 
 define('UWR1RESULTS_VERSION', '1.0.4');
@@ -64,7 +66,6 @@ $RUL_HARDCODED = array(
 	'view' => 'index',
 	'season' => '2011',//unused?
 ); // HARDCODED
-
 
 /*
 // DEBUG
