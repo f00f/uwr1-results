@@ -37,7 +37,7 @@ class Uwr1resultsHelper {
 	public static function checkPermission( $perm='save' ) {
 		switch ( $perm ) {
 			case 'save':
-				return current_user_can('edit_posts');
+				return current_user_can(UWR1RESULTS_CAPABILITIES);
 				break;
 		}
 	}
