@@ -36,10 +36,9 @@ define('UWR1RESULTS_JSON_CACHE_URL', 'http://uwr1cdn.appspot.com/jc/json');
 define('UWR1RESULTS_JSON_CACHE_UPDATE_URL', 'http://uwr1cdn.appspot.com/jc/update');
 
 define('UWR1RESULTS_CAPABILITIES',  'read');
-
 # END OF CONFIG
 
-define('UWR1RESULTS_VERSION', '1.0.4');
+define('UWR1RESULTS_VERSION', '1.0.5');
 define('UWR1RESULTS_AJAX_API_VERSION', '2');
 
 define('UWR1RESULTS_TBL_REGIONS',   UWR1RESULTS_TBL_PRE . 'regions'  );
