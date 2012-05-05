@@ -194,11 +194,13 @@ class Uwr1resultsModel {
 		 	. $where
 			. $order;
 
-		return $this->_wpdb->get_results($sql);
+		global $wpdb;
+		return $wpdb->get_results($sql);
 	}
 
 	protected function findFirst($sql) {
-		$result =& $this->_wpdb->get_row($sql);
+		global $wpdb;
+		$result =& $wpdb->get_row($sql);
 
 		foreach ($this->dbMapping as $prop => $dbField) {
 			$this->properties[ $prop ] = $result->$dbField;
@@ -264,7 +266,8 @@ class Uwr1resultsModel {
 			. ' VALUES'
 			. " ({$valuesStr})";
 		//print $sql . ' (Uwr1resultsModel::save)'; exit;
-		$res = $this->_wpdb->query($sql);
+		global $wpdb;
+		$res = $wpdb->query($sql);
 
 		if ($notifyJsonCache) {
 			$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . self::getTable(get_class($this)));
