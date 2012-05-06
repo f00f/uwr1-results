@@ -59,13 +59,13 @@ function print_ranking(Uwr1resultsRanking $ranking, $dbgDV = false) {
 	print '<div class="notes">';
 	if ($ranking->hasHead2HeadSituations()) {
 		if ($ranking->useDV) {
-			print '* <strong>Achtung:</strong> Du benutzt den Direkten Vergleich (beta).'
+			print 'Du benutzt den Direkten Vergleich (beta).'
 				.' <a href="/kontakt">Fehler/Probleme melden</a>.'
-				.' (<a href="?dv=0">Dir. Vergl. abschalten</a>)<br />';
-			print 'Direkter Vergleich berücksichtigt zwischen '.$head2headComparisons.'.<br />';
+				.' (<a href="?nodv=1">DV abschalten</a>)<br />';
+			print 'Direkter Vergleich ist berücksichtigt zwischen '.$head2headComparisons.'.<br />';
 		} else {
 			print '* <strong>Achtung:</strong> Direkter Vergleich zwischen '.$head2headComparisons.' wird in der hier angezeigten Tabelle nicht beachtet!';
-			print ' <a href="?dv=1">Probiere den Direkten Vergleich aus</a> (beta).<br />';
+			print ' <a href="?nodv=0">Probiere den Direkten Vergleich aus</a> (beta).<br />';
 		}
 	}
 	print 'Sortierung: Punkte, direkter Vergleich'
