@@ -6,7 +6,7 @@ Author URI: http://uwr1.de/
 */
 
 require_once 'uwr1res_config.inc.php';
-
+require_once 'uwr1results_ranking.class.php';
 
 class Uwr1resultsModelLeague
 extends Uwr1resultsModel {
@@ -23,7 +23,6 @@ extends Uwr1resultsModel {
 	private $matchdays = null;
 	private $results = null;
 	private $ranking = null;
-	private $useDV = false;
 
 	/**
 	 * The singleton instance of this object.
@@ -74,11 +73,9 @@ SQL;
 		return $this->_wpdb->query($sql);
 	}
 
-
 	protected function leagueSlug() {
 		return $this->slug();
 	}
-
 
 	// try to find league_id automatically from request
 	public function autoId() {
@@ -92,64 +89,6 @@ SQL;
 			}
 		}
 		return false;
-	}
-
-	private function createRanking() {
-		$this->ranking = array();
-
-		foreach ($this->results() as $f) {
-			// add all teams to the ranking
-			if ($f->t_b_name && $f->t_w_name) {
-				$this->ranking[ $f->t_b_ID ]['id'] = $f->t_b_ID;
-				$this->ranking[ $f->t_b_ID ]['name'] = $f->t_b_name;
-				$this->ranking[ $f->t_w_ID ]['id'] = $f->t_w_ID;
-				$this->ranking[ $f->t_w_ID ]['name'] = $f->t_w_name;
-			}
-			if (!$f->result_ID) { continue; } // don't count fixtures that don't have results
-			if ($f->fixture_friendly) {
-				// don't take friendly games into account for ranking
-				$this->ranking[ $f->t_b_ID ]['friendlyMatchesPlayed']++;
-				$this->ranking[ $f->t_w_ID ]['friendlyMatchesPlayed']++;
-				continue;
-			}
-	
-			$this->ranking[ $f->t_b_ID ]['id'] = $f->t_b_ID;
-			$this->ranking[ $f->t_b_ID ]['name'] = $f->t_b_name;
-			$this->ranking[ $f->t_b_ID ]['goalsPos'] += $f->result_goals_b;
-			$this->ranking[ $f->t_b_ID ]['goalsNeg'] += $f->result_goals_w;
-			$this->ranking[ $f->t_b_ID ]['pointsPos'] += $f->result_points_b;
-			$this->ranking[ $f->t_b_ID ]['pointsNeg'] += $f->result_points_w;
-			$this->ranking[ $f->t_b_ID ]['matchesPlayed']++;
-			$this->ranking[ $f->t_b_ID ]['playedAgainst'][$f->t_w_ID] = true;
-	
-			$this->ranking[ $f->t_w_ID ]['id'] = $f->t_w_ID;
-			$this->ranking[ $f->t_w_ID ]['name'] = $f->t_w_name;
-			$this->ranking[ $f->t_w_ID ]['goalsPos'] += $f->result_goals_w;
-			$this->ranking[ $f->t_w_ID ]['goalsNeg'] += $f->result_goals_b;
-			$this->ranking[ $f->t_w_ID ]['pointsPos'] += $f->result_points_w;
-			$this->ranking[ $f->t_w_ID ]['pointsNeg'] += $f->result_points_b;
-			$this->ranking[ $f->t_w_ID ]['matchesPlayed']++;
-			$this->ranking[ $f->t_w_ID ]['playedAgainst'][$f->t_b_ID] = true;
-		}
-	
-		foreach ($this->ranking as $id => $team) {
-			$this->ranking[ $id ]['goalsDiff']  = $team['goalsPos']  - $team['goalsNeg']; 
-			$this->ranking[ $id ]['pointsDiff'] = $team['pointsPos'] - $team['pointsNeg']; 
-			$this->ranking[ $id ]['head2head'] = false;
-			$this->ranking[ $id ]['head2headTeams'] = array();
-			if (!$this->ranking[ $id ]['matchesPlayed']) {
-				$this->ranking[ $id ]['matchesPlayed'] = 0;
-				$this->ranking[ $id ]['pointsPos']     = '&mdash;';
-				$this->ranking[ $id ]['goalsPos']      = '&ndash;';
-				$this->ranking[ $id ]['goalsNeg']      = '&ndash;';
-				$this->ranking[ $id ]['goalsDiff']     = '&mdash;'; 
-			}
-		}
-	}
-
-	private function sortRanking() {
-		uasort($this->ranking, 'uwr1resLeagueRanking'); // usort, uasort, uksort
-		// TODO: remove duplicates from $rank['head2headTeams'] using array_unique()
 	}
 
 	// ACCESSORS
@@ -190,14 +129,14 @@ SQL;
 	}
 
 	public function &rankingDV() {
-		$this->useDV = true;
-		return $this->ranking();
+        $useDV = true;
+		return $this->ranking($useDV);
 	}
 
-	public function &ranking() {
+	public function &ranking($useDV = false) {
 		if (is_null($this->ranking)) {
-			$this->createRanking();
-			$this->sortRanking();
+			$this->ranking = new Uwr1resultsRanking($this->results());
+            $this->ranking->sort($useDV);
 		}
 		return $this->ranking;
 	}
@@ -274,65 +213,6 @@ SQL;
 	
 		return $this->findFirst($sql);
 	}
-
-	public static function leagueRankingCmp( &$a, &$b ) {
-		// -1 : a < b : a before b 
-		//  0 : a = b : a equal  b 
-		// +1 : a > b : a after  b 
-		
-		// one team played friendly matches only = worse (ausser Konkurrenz)
-		if ($a['friendlyMatchesPlayed'] && ! $a['matchesPlayed'] && $b['matchesPlayed']) {
-			return 1;
-		}
-		if ($b['friendlyMatchesPlayed'] && ! $b['matchesPlayed'] && $a['matchesPlayed']) {
-			return -1;
-		}
-		
-		// more pointsPos = better
-		if ($a['pointsPos'] <> $b['pointsPos']) {
-			return ($a['pointsPos'] > $b['pointsPos']) ? -1 : 1;
-		}
-	
-		else {
-			//print '<!-- DV: '.print_r($a['playedAgainst'], true).' vs. '.print_r($b, true).' -->';
-			if ($a['playedAgainst'][ $b['id'] ]) {
-				// find matches between a and b and evaluate them.
-				//print '<!-- DV: '.$a['name'].' vs. '.$b['name'].' -->';
-				$a['head2head'] = $b['head2head'] = true;
-				$a['head2headTeams'][] = $b['name'];
-				$b['head2headTeams'][] = $a['name'];
-
-/*
-				foreach ($this->results() as $f) {
-					// HIER FEHLT:
-					// direkter vgl pointsPos
-					// direkter vgl goalsDiff
-					// direkter vgl goalsPos
-				}
-*/
-			}
-		}
-	
-		// equal pointsPos => higher goalsDiff = better
-		if ($a['goalsDiff'] <> $b['goalsDiff']) {
-			return ($a['goalsDiff'] > $b['goalsDiff']) ? -1 : 1;
-		}
-	
-		// equal goalsDiff => more goalsPos = better
-		if ($a['goalsPos'] <> $b['goalsPos']) {
-			return ($a['goalsPos'] > $b['goalsPos']) ? -1 : 1;
-		}
-	
-		// Los
-	
-		return 0; // considered equal
-	}
-	
 } // Uwr1resultsModelLeague
 Uwr1resultsModelLeague::initTable('Uwr1resultsModelLeague', UWR1RESULTS_TBL_LEAGUES);
-
-// wrapper funktion
-function uwr1resLeagueRanking(&$a, &$b) {
-	return Uwr1resultsModelLeague::leagueRankingCmp($a, $b);
-}
 ?>

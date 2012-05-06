@@ -41,7 +41,7 @@ define('UWR1RESULTS_CAPABILITIES_ADD',  'read');
 define('UWR1RESULTS_CAPABILITIES_EDIT',  'edit_others_posts');
 # END OF CONFIG
 
-define('UWR1RESULTS_VERSION', '1.0.6');
+define('UWR1RESULTS_VERSION', '1.1.0');
 define('UWR1RESULTS_AJAX_API_VERSION', '2');
 
 define('UWR1RESULTS_TBL_REGIONS',   UWR1RESULTS_TBL_PRE . 'regions'  );
@@ -63,11 +63,12 @@ require_once 'uwr1results_model_fixture.class.php';
 require_once 'uwr1results_model_result.class.php';
 require_once 'uwr1results_model_team.class.php';
 
+/*
 $RUL_HARDCODED = array(
 //	'view' => 'league',
 	'view' => 'index',
-	'season' => '2011',//unused?
 ); // HARDCODED
+*/
 
 /*
 // DEBUG

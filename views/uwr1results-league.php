@@ -7,12 +7,12 @@ Author: Hannes Hofmann
 Author URI: http://uwr1.de/
 */
 
-function print_ranking(&$ranking, $dbgDV = false) {
+function print_ranking(Uwr1resultsRanking $ranking, $dbgDV = false) {
 	global $printDebug;
 	$league =& Uwr1resultsModelLeague::instance();
 
-	if (0 == count($ranking)) {
-		return;
+    if (0 == $ranking->numTeams()) {
+        return;
 	}
 
 	print '<div class="ranking">';
@@ -31,19 +31,18 @@ function print_ranking(&$ranking, $dbgDV = false) {
 	print '</tr>';
 	$r=0;
 	$altRowClass = 1;
-	$head2headUsed = false;
-	$head2headTeams = array();
-	foreach ($ranking as $rank) {
+	foreach ($ranking->head2headTeams as $pts => $teams) {
+		sort($teams);
+		$ranking->head2headTeams[ $pts ] = implode(', ', $teams);
+	}
+	$head2headComparisons = implode(' sowie ', $ranking->head2headTeams);
+	foreach ($ranking->rnk as $rank) {
 		$altRowClass = 1 - $altRowClass;
-		if ($rank['head2head']) {
-			$head2headUsed = true;
-			$head2headTeams[] = $rank['name'];
-		}
 		if (!$rank['matchesPlayed'] && $rank['friendlyMatchesPlayed']) {
 			$rank['matchesPlayed'] = '('.$rank['friendlyMatchesPlayed'].'<sup><a href="#fn-F">F</a></sup>)';
 		}
 		print '<tr'.($altRowClass ? ' class="alt"' : '').'>'
-			. '<td>'.sprintf('%02d', ++$r).(@$rank['head2head'] ? '<abbr style="border:none;" title="Direkter Vergleich mit '.implode(', ', array_unique($rank['head2headTeams'])).'">*</abbr>' : '').'</td>'
+			. '<td>'.sprintf('%02d', ++$r).(@$rank['head2head'] ? '<abbr style="border:none;" title="Direkter Vergleich mit '.$ranking->head2headTeams[$rank['pointsPos']].'">*</abbr>' : '').'</td>'
 			. '<td>'.$rank['name'].'</td>'
 			. '<td class="num">'.$rank['matchesPlayed'].'</td>'
 			. '<td class="r">'.$rank['goalsDiff'].'</td>'
@@ -57,14 +56,22 @@ function print_ranking(&$ranking, $dbgDV = false) {
 		print '</tr>';
 	}
 	print '</table>';
-	print '<div class="notes">'
-		. ($head2headUsed
-			? '* <strong>Achtung:</strong> Direkter Vergleich zwischen '.implode(', ', $head2headTeams).' wird in der hier angezeigten Tabelle nicht beachtet!<br />'
-			: '')
-		. 'Sortierung: Punkte, direkter Vergleich'
-			. ($head2headUsed
-				? ''
-				: ' (wird in der hier angezeigten Tabelle nicht beachtet)')
+	print '<div class="notes">';
+	if ($ranking->hasHead2HeadSituations()) {
+		if ($ranking->useDV) {
+			print '* <strong>Achtung:</strong> Du benutzt den Direkten Vergleich (beta).'
+				.' <a href="/kontakt">Fehler/Probleme melden</a>.'
+				.' (<a href="?dv=0">Dir. Vergl. abschalten</a>)<br />';
+			print 'Direkter Vergleich berücksichtigt zwischen '.$head2headComparisons.'.<br />';
+		} else {
+			print '* <strong>Achtung:</strong> Direkter Vergleich zwischen '.$head2headComparisons.' wird in der hier angezeigten Tabelle nicht beachtet!';
+			print ' <a href="?dv=1">Probiere den Direkten Vergleich aus</a> (beta).<br />';
+		}
+	}
+	print 'Sortierung: Punkte, direkter Vergleich'
+			. ($ranking->hasHead2HeadSituations()
+				? ($ranking->useDV ? '' : ' (wird in der hier angezeigten Tabelle nicht beachtet)')
+				: '')
 			. ', Tordifferenz, positive Tore.<br />'
 		. $league->notes().'<br />'
 		. '</div>'
@@ -98,7 +105,6 @@ $printDebug = (1 == $GLOBALS['current_user']->ID);
 	<div id="league_page" class="uwr1results-view wrap_content has_sidebar">
 	<div class="post-v2">
 	<?php
-	//<p class="notice">Dieser Teil von <a href="http://uwr1.de/" title="Unterwasserrugby">uwr1.de</a> befindet sich noch in der Entwicklung. Es kann deshalb passieren, dass noch Fehler auftreten.</p>
 	$season = Uwr1resultsController::season();
 	$season = $season.'/'.($season+1); // FIXME: use a function to do that
 
@@ -106,19 +112,33 @@ $printDebug = (1 == $GLOBALS['current_user']->ID);
 	print '<h1 class="entry-title">'
 		.'<a href="'.get_permalink().'" rel="bookmark" title="Permanenter Link zu '.$title.'">'
 		.$title.'</a></h1>';
-	
+
 	// breadcrumbs
 	print '<div id="breadcrumbs">Du bist hier: <a href="'.Uwr1resultsView::indexUrl().'" title="Unterwasserrugby Ergebnisse">UWR Ergebnisse</a> &raquo; '
 //		. Uwr1resultsModelRegion::instance()->name()
 //		. ' &raquo; '
 		. $league->shortName().'</div><br />';
 
-if (1 == @$_GET['dv']) {
-	// direkter vergleich
-	print_ranking($league->rankingDV(), true);
-} else {
-	print_ranking($league->ranking());
-}
+    $useDV = ! (1 == @$_GET['nodv']);
+    print '<p class="notice"><strong>Neu: Direkter Vergleich (beta).</strong>';
+    if ($useDV) {
+        print ' In den Tabellen wird jetzt bei Punktgleichstand der Direkte Vergleich ausgewertet.'
+            . ' Nach einer Testphase wird der Direkte Vergleich ab sofort für alle Benutzer aktiviert.'
+            . ' [<a href="?nodv=1">abschalten</a>]';
+    } else {
+        print ' Du hast den Direkten Vergleich deaktiviert.'
+            . ' Ich würde mich freuen <a href="/kontakt">zu hören</a>, warum.'
+            . ' Gab es einen Fehler oder ein Problem mit der neuen Funktion?'
+            . ' [<a href="?nodv=0">DV wieder aktivieren</a>]';
+    }
+    print '</p>';
+
+    if ($useDV) {
+		// direkter vergleich
+		print_ranking($league->rankingDV(), true);
+	} else {
+		print_ranking($league->ranking());
+	}
 
 	global $currentMatchday, $fixtureNumberTotal, $fixtureNumberLocal, $printFriendlyNote;
 	$currentMatchday = 0;

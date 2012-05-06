@@ -172,7 +172,10 @@ SQL;
 		return true;
 	} // saveMany
 
+	// TODO: should this be private?
+	// Controller calls populateAndSave() or saveMany()
 	public function save() {
+		global $wpdb;
 		// TODO: check permissions
 		Uwr1resultsHelper::enforcePermission( 'save' );
 
@@ -181,8 +184,10 @@ SQL;
 		$doSave = false;
 		// does this work, or does it modify $this?
 		// the latter would suck, esp. b/c we're a singleton.
-		$oldResult = $this->findById($this->id());
-		
+		//$oldResult = $this->findById($this->id());
+		// TODO: yep, it does modify $this!
+
+
 		// all cases where an update is needed:
 		// 1) new result (there is no old result)
 		if (!$doSave && !$oldResult) {
@@ -230,7 +235,7 @@ SQL;
 			. ' VALUES'
 			. " ({$valuesStr})";
 //		print $sql;exit;
-		$res = $this->_wpdb->query($sql);
+		$res = $wpdb->query($sql);
 		
 		$this->notifyJsonCache($this->leagueSlug(), __FILE__);
 		return $res;
@@ -238,7 +243,7 @@ SQL;
 
 
 	// FIND METHODS
-		
+
 	public function findByFixtureId($fixtureId) {
 		$fixtureId = intval( $fixtureId );
 		if (!$fixtureId) {
@@ -253,6 +258,41 @@ SQL;
 			. " LIMIT 1";
 
 		return $this->findFirst($sql);
+	}
+
+	/* Find all results where both teams are in the given list of team IDs.
+	 * 
+	 * Return value can be used as input for createRanking()
+	 * returns the same information as findByLeagueId()
+	 */
+	public function findByTeamIds($teamIds, $seasonId = 0) {
+		foreach ($teamIds as $k => $v) {
+			$id = intval( $v );
+			if ($id <= 0) {
+				unset($teamIds[$k]);
+			}
+			$teamIds[$k] = $id;
+		}
+
+		$resultsTable   = parent::getTable(get_class($this));
+		$matchdaysTable = parent::getTable('Uwr1resultsModelMatchday');
+		$fixturesTable  = parent::getTable('Uwr1resultsModelFixture');
+		$teamsTable     = parent::getTable('Uwr1resultsModelTeam');
+		if (!$seasonId) $seasonId = Uwr1resultsController::season();
+
+		$team_ids = implode(', ', $teamIds);
+ 		$sql = "SELECT `r`.*, `f`.*,"
+ 			. " `t_b`.`team_ID` AS `t_b_ID`, `t_b`.`team_name` AS `t_b_name`,"
+ 			. " `t_w`.`team_ID` AS `t_w_ID`, `t_w`.`team_name` AS `t_w_name`"
+			. " FROM `{$resultsTable}` AS `r`"
+			. " LEFT JOIN `{$fixturesTable}` AS `f` ON `f`.`fixture_ID` = `r`.`fixture_ID`"
+ 			. " LEFT JOIN `{$matchdaysTable}` AS `m` ON `m`.`matchday_ID` = `f`.`matchday_ID`"
+			. " LEFT JOIN `{$teamsTable}` AS `t_b` ON `t_b`.`team_ID` = `f`.`fixture_team_blue`"
+			. " LEFT JOIN `{$teamsTable}` AS `t_w` ON `t_w`.`team_ID` = `f`.`fixture_team_white`"
+			. " WHERE ( `f`.`fixture_team_blue`  IN ({$team_ids})"
+			. "   AND `f`.`fixture_team_white` IN ({$team_ids}) )"
+			. "   AND `m`.`season_id` = {$seasonId}";
+		return $this->_wpdb->get_results($sql);
 	}
 /*
 	public function findByMatchdayId( $matchdayId ) {
@@ -449,7 +489,29 @@ SQL;
 		$ret['status'] = 'ZERO_RESULTS';
 		return $ret;
 	}
+	
+	function fillItem() {
+		if (! ($this->hasProperty('fixtureId') && $this->fixtureId()) ) {
+			if (!empty($_REQUEST['fixture_id'])) {
+				$this->set( 'fixtureId', intval($_REQUEST['fixture_id']) );
+			} else {
+				return new Uwr1resultsException('No ID given');
+			}
+		}
 
+		$this->populate(array(
+			'id'                => $this->fixtureId(),
+			'userId'            => $current_user->ID,
+			'modified'          => 'NOW()',
+			'goalsBlue'         => intval($_POST['goalsBlue']),
+			'goalsWhite'        => intval($_POST['goalsWhite']),
+			'goalsHalfBlue'     => -1,
+			'goalsHalfWhite'    => -1,
+			'goalsRegularBlue'  => -1,
+			'goalsRegularWhite' => -1,
+			'comment'           => trim($_POST['comment']),
+		));
+	}
 } // Uwr1resultsModelResult
 Uwr1resultsModelResult::initTable('Uwr1resultsModelResult', UWR1RESULTS_TBL_RESULTS);
 ?>
