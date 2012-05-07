@@ -129,14 +129,14 @@ SQL;
 	}
 
 	public function &rankingDV() {
-        $useDV = true;
-		return $this->ranking($useDV);
+        $resolveH2H = true;
+		return $this->ranking($resolveH2H);
 	}
 
-	public function &ranking($useDV = false) {
+	public function &ranking($resolveH2H = false) {
 		if (is_null($this->ranking)) {
 			$this->ranking = new Uwr1resultsRanking($this->results());
-            $this->ranking->sort($useDV);
+            $this->ranking->sort($resolveH2H);
 		}
 		return $this->ranking;
 	}

@@ -1,13 +1,16 @@
 <?php
 class Uwr1resultsRanking {
     public $rnk;
-    public $useDV = false;
+    private $resolveH2H = false;
 
     public $head2headTeams = array();
     public $head2headTeamIDs = array();
 
+    /* Creates the ranking, accumulating all points and goals.
+     * @param mixed $results all match results to be considered
+     */
     public function &Uwr1resultsRanking(&$results) {
-        $this->useDV = ! (1 == @$_GET['nodv']);
+        $this->resolveH2H = ! (1 == @$_GET['nodv']);
 
         $this->rnk = array();
 
@@ -60,15 +63,78 @@ class Uwr1resultsRanking {
         }
     }
 
-    public function sort($useDV = false) {
+    /* Sorts the ranking.
+     * @param bool $resolveH2H do resolve head 2 head situations
+     */
+    public function sort($resolveH2H = false) {
         uasort($this->rnk, array($this, 'compareTeams')); // usort, uasort, uksort
 
-        $this->useDV = $useDV;
-        if ($useDV) {
-            print '<hr />Using DV<br />';
+        $this->resolveH2H = $resolveH2H;
+        if ($this->usesResolveH2H()) {
+            //print '<hr />Using DV<br />';
             $this->resolveHead2HeadSituations();
-            print '<hr />';
+            //print '<hr />';
         }
+    }
+
+    public function usesResolveH2H() {
+        return $this->resolveH2H;
+    }
+
+    /* Info about the team at a given rank.
+     * @param int $num rank of the team
+     */
+    public function getRank($num) {
+        // TODO: implement ...
+    }
+
+    /* Swaps two teams in the ranking.
+     * @param int $num1 rank of the one team
+     * @param int $num2 rank of the other team
+     */
+    public function swapRanks($num1, $num2) {
+        // TODO: implement ...
+    }
+
+    /* Alters order of a portion of the ranking.
+     * @param array $ordered_ids
+     * Restrictions/Notes:
+     * - the reordering may only affect a portion of the ranking
+     * - the affected region has to be contiguous in the ranking
+     */
+    public function alterRankingOrder($ordered_ids) {
+        //print "<pre>new order\n";print_r($ordered_ids);print '</pre>';
+        //print "<pre>old rnk\n";print_r(array_keys($this->rnk));print '</pre>';
+        // find first ID contained in $ordered_ids
+        $offset = 0;
+        foreach ($this->rnk as $k => $rank) {
+            if (in_array($k, $ordered_ids)) {
+                break;
+            }
+            ++$offset;
+        }
+        // get parts before and after the chunk
+        $len1 = $offset;
+        $len2 = count($ordered_ids);
+        $len3 = $this->numTeams() - $len1 - $len2;
+        $before = array_slice($this->rnk, 0, $len1, true);
+        $chunk = array_slice($this->rnk, $len1, $len2, true);
+        $after = array_slice($this->rnk, $len1+$len2, $len3, true);
+        // reorder $chunk
+        $ordered_chunk = array();
+        foreach ($ordered_ids as $id) {
+            $ordered_chunk[$id] = $chunk[$id];
+        }
+        unset($chunk);
+        // combine three parts
+        // three options:
+        // - +-operator
+        // - array_splice (which does not preserve numerical keys!)
+        // - array_merge might corrupt numerical keys
+        $this->rnk = $before + $ordered_chunk + $after;
+        //print "<pre>new rnk\n";print_r(array_keys($this->rnk));print '</pre>';
+        //$this->rnk = array_splice($this->rnk, $len1, $len2, $chunk);
+        //$this->rnk = array_merge($before, $chunk, $after);
     }
 
     public function numTeams() {
@@ -109,7 +175,7 @@ class Uwr1resultsRanking {
      */
     private function resolveHead2HeadSituations() {
         foreach ($this->head2headTeamIDs as $pts => $ids) {
-            print 'resolving '.implode(', ', $this->head2headTeams[ $pts ]).'<br />';
+            //print 'resolving '.implode(', ', $this->head2headTeams[ $pts ]).'<br />';
             $h2h_resolved = true;
 
             $num_teams_involved = count($ids);
@@ -118,14 +184,14 @@ class Uwr1resultsRanking {
             // also, if there are no matches in the comparison, it is undecided
             if (0 === count($h2h_results)) {
                 $h2h_resolved = false;
-                print 'no matches in comparison -&gt; undecidable.<br />';
+                //print 'no matches in comparison -&gt; undecidable.<br />';
                 $this->resetHead2HeadSituation($ids);
                 continue; // check next h2h situation
             }
             $h2h_rnk = new Uwr1resultsRanking($h2h_results);
             if ($h2h_rnk->numTeams() != $num_teams_involved) {
                 $h2h_resolved = false;
-                print 'H2H ranking incomplete -&gt; undecidable.<br />';
+                //print 'H2H ranking incomplete -&gt; undecidable.<br />';
                 $this->resetHead2HeadSituation($ids);
                 continue; // check next h2h situation
             }
@@ -150,7 +216,7 @@ class Uwr1resultsRanking {
                         $matches_played = $rank['matchesPlayed'];
                     } elseif ($rank['matchesPlayed'] != $matches_played) {
                         $h2h_resolved = false;
-                        print 'inequal num. of matches -&gt; undecidable.<br />';
+                        //print 'inequal num. of matches -&gt; undecidable.<br />';
                         $this->resetHead2HeadSituation($ids);
                         break;
                     }
@@ -184,7 +250,7 @@ class Uwr1resultsRanking {
                         }
                     }
                     if ($all_equal) {
-                        print 'all teams equal -&gt; undecidable.<br />';
+                        //print 'all teams equal -&gt; undecidable.<br />';
                         $h2h_resolved = false;
                         $this->resetHead2HeadSituation($ids);
                         break;
@@ -193,24 +259,28 @@ class Uwr1resultsRanking {
             }
 
             if ($h2h_resolved) {
-                print 'success. <b>Will update order of ranking.</b><br />';
+                //print 'success. <b>Will update order of ranking.</b><br />';
                 //print '<pre>';print_r($h2h_results);print '</pre>';
                 //print '<pre>';print_r($h2h_rnk);print '</pre>';
+                /*
                 print 'Ranking:<br />';
                 $i = 0;
                 foreach ($h2h_rnk->rnk as $rank) {
                     print ++$i.'. '.$rank['name'].'<br />';
                 }
+                */
                 $order_correct = $this->checkIfOrderIsCorrect($h2h_rnk);
                 if ($order_correct) {
-                    print 'Prev. order was already correct<br />';
-                    $this->resetHead2HeadSituation($ids);
+                    //print 'Prev. order was already correct<br />';
+                } else {
+                    $this->alterRankingOrder(array_keys($h2h_rnk->rnk));
                 }
             } else {
                 //print 'H2H is still undecided. Will NOT update order of ranking.<br />';
                 //print '<pre>';print_r($h2h_rnk);print '</pre>';
-                $this->resetHead2HeadSituation($ids);
             }
+            // in each of the above cases the h2h situation is resolved.
+            $this->resetHead2HeadSituation($ids);
         }
     }
 

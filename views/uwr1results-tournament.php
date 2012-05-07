@@ -55,7 +55,7 @@ function print_ranking(Uwr1resultsRanking $ranking) {
 	print '</table>';
 	print '<div class="notes">';
     if ($ranking->hasHead2HeadSituations()) {
-        if ($ranking->useDV) {
+        if ($ranking->usesResolveH2H()) {
             print 'Du benutzt den Direkten Vergleich (beta).'
                 .' <a href="/kontakt">Fehler/Probleme melden</a>.'
                 .' (<a href="?nodv=1">DV abschalten</a>)<br />';
@@ -67,7 +67,7 @@ function print_ranking(Uwr1resultsRanking $ranking) {
     }
     print 'Sortierung: Punkte, direkter Vergleich'
         . ($ranking->hasHead2HeadSituations()
-            ? ($ranking->useDV ? '' : ' (wird in der hier angezeigten Tabelle nicht beachtet)')
+            ? ($ranking->usesResolveH2H() ? '' : ' (wird in der hier angezeigten Tabelle nicht beachtet)')
             : '')
         . ', Tordifferenz, positive Tore.<br />'
         . $tournament->notes().'<br />'
@@ -165,7 +165,12 @@ $printDebug = (1 == $GLOBALS['current_user']->ID);
 		print '<div>Ausgetragen ' . $t_date . ' in ' . $t_location . '.<br /><br /></div>';
 	}
 
-	print_ranking($tournament->ranking());
+    if ($useDV) {
+        // direkter vergleich
+        print_ranking($tournament->rankingDV(), true);
+    } else {
+        print_ranking($tournament->ranking());
+    }
 
 	global $currentMatchday, $fixtureNumberTotal, $fixtureNumberLocal, $printFriendlyNote;
 	$currentMatchday = 0;

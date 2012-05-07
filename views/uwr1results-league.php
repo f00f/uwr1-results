@@ -58,7 +58,7 @@ function print_ranking(Uwr1resultsRanking $ranking, $dbgDV = false) {
 	print '</table>';
 	print '<div class="notes">';
 	if ($ranking->hasHead2HeadSituations()) {
-		if ($ranking->useDV) {
+		if ($ranking->usesResolveH2H()) {
 			print 'Du benutzt den Direkten Vergleich (beta).'
 				.' <a href="/kontakt">Fehler/Probleme melden</a>.'
 				.' (<a href="?nodv=1">DV abschalten</a>)<br />';
@@ -70,7 +70,7 @@ function print_ranking(Uwr1resultsRanking $ranking, $dbgDV = false) {
 	}
 	print 'Sortierung: Punkte, direkter Vergleich'
 			. ($ranking->hasHead2HeadSituations()
-				? ($ranking->useDV ? '' : ' (wird in der hier angezeigten Tabelle nicht beachtet)')
+				? ($ranking->usesResolveH2H() ? '' : ' (wird in der hier angezeigten Tabelle nicht beachtet)')
 				: '')
 			. ', Tordifferenz, positive Tore.<br />'
 		. $league->notes().'<br />'
