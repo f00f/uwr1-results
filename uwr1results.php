@@ -19,4 +19,3 @@ require_once 'uwr1results_controller.class.php';
 // (De-)Activation hooks
 register_activation_hook(__FILE__, array('RulesultsController', 'activatePlugin'));
 register_deactivation_hook(__FILE__, array('RulesultsController', 'deactivatePlugin'));
-?>

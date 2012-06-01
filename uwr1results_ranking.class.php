@@ -349,4 +349,3 @@ class Uwr1resultsRanking {
         return 0; // considered equal
     }
 } // Uwr1resultsRanking
-?>

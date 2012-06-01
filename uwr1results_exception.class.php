@@ -23,4 +23,3 @@ class Uwr1resultsException {
 		exit;
 	}
 } // Uwr1resultsException
-?>

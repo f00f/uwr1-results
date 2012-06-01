@@ -188,4 +188,3 @@ SQL;
 
 } // Uwr1resultsModelMatchday
 Uwr1resultsModelMatchday::initTable('Uwr1resultsModelMatchday', UWR1RESULTS_TBL_MATCHDAYS);
-?>

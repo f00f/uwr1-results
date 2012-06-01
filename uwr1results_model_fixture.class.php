@@ -229,4 +229,3 @@ SQL;
 	}
 } // Uwr1resultsModelFixture
 Uwr1resultsModelFixture::initTable('Uwr1resultsModelFixture', UWR1RESULTS_TBL_FIXTURES);
-?>

@@ -275,4 +275,3 @@ class Uwr1resultsModel {
 		return $res;
 	}
 } // Uwr1resultsModel
-?>

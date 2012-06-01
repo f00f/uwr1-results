@@ -160,4 +160,3 @@ class Uwr1resultsHelper {
 	}
 
 } // Uwr1resultsHelper
-?>

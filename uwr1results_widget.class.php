@@ -198,4 +198,3 @@ class Uwr1resultsWidget {
 
 // Run our code later in case this loads prior to any required plugins.
 add_action('widgets_init', array('Uwr1resultsWidget', 'Init') );
-?>

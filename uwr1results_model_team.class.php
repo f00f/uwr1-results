@@ -95,4 +95,3 @@ SQL;
 	}
 } // Uwr1resultsModelTeam
 Uwr1resultsModelTeam::initTable('Uwr1resultsModelTeam', UWR1RESULTS_TBL_TEAMS);
-?>

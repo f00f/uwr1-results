@@ -82,4 +82,3 @@ SQL;
 	}
 } // Uwr1resultsModelRegion
 Uwr1resultsModelRegion::initTable('Uwr1resultsModelRegion', UWR1RESULTS_TBL_REGIONS);
-?>

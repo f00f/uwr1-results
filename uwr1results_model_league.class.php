@@ -215,4 +215,3 @@ SQL;
 	}
 } // Uwr1resultsModelLeague
 Uwr1resultsModelLeague::initTable('Uwr1resultsModelLeague', UWR1RESULTS_TBL_LEAGUES);
-?>

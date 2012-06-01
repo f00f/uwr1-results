@@ -514,4 +514,3 @@ SQL;
 	}
 } // Uwr1resultsModelResult
 Uwr1resultsModelResult::initTable('Uwr1resultsModelResult', UWR1RESULTS_TBL_RESULTS);
-?>

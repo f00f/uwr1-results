@@ -78,4 +78,3 @@ function getRewriteRules() {
 //    return $wp_rewrite->rewrite_rules();
 }
 */
-?>

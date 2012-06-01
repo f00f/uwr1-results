@@ -512,4 +512,3 @@ function addIcalRewriteTag() {
 }
 add_action('init', 'addIcalRewriteTag');
 */
-?>
