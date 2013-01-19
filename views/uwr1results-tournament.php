@@ -15,7 +15,7 @@ function print_ranking(Uwr1resultsRanking $ranking) {
 		return;
 	}
 
-	print '<div class="ranking">';
+	print '<div id="ranking">';
 	print '<table cellspacing="0" class="spielplan liga">';
 	print '<tr>'
 		. '<th>Platz</th>'
@@ -40,7 +40,7 @@ function print_ranking(Uwr1resultsRanking $ranking) {
         $altRowClass = 1 - $altRowClass;
 		print '<tr'.($altRowClass ? ' class="alt"' : '').'>'
 			. '<td>'.sprintf('%02d', ++$r).(@$rank['head2head'] ? '<abbr style="border:none;" title="Direkter Vergleich mit '.$ranking->head2headTeams[$rank['pointsPos']].'">*</abbr>' : '').'</td>'
-			. '<td>'.$rank['name'].'</td>'
+			. '<td class="tm">'.$rank['name'].'</td>'
 			. '<td class="num">'.$rank['matchesPlayed'].'</td>'
 			. '<td class="r">'.$rank['goalsDiff'].'</td>'
 			. '<td>'.' <span class="detail">('.$rank['goalsPos'].' : '.$rank['goalsNeg'].')</span></td>'
@@ -261,10 +261,10 @@ $printDebug = (1 == $GLOBALS['current_user']->ID);
 			$white['goals'] =& $m->result_goals_w;
 			$white['class'] = '';
 			if ($blue['goals'] > $white['goals']) {
-				$blue['class'] = ' class="win"';
+				$blue['class'] = ' win';
 			}
 			if ($blue['goals'] < $white['goals']) {
-				$white['class'] = ' class="win"';
+				$white['class'] = ' win';
 			}
 			$author = get_userdata( $m->user_ID );
 			// print fixture
@@ -276,8 +276,8 @@ $printDebug = (1 == $GLOBALS['current_user']->ID);
 			}
 			print '<tr'.($altRowClass ? ' class="alt"' : '').'>'
 				.'<td class="num">'.sprintf('%02d', $fixtureNumberTotal).'</td>'
-				.'<td'.$blue['class'].">{$m->t_b_name}</td>"
-				.'<td'.$white['class'].">{$m->t_w_name}</td>"
+				."<td class='tm{$blue['class']}'>{$m->t_b_name}</td>"
+				."<td class='tm{$white['class']}'>{$m->t_w_name}</td>"
 				.'<td class="ergebnis">'
 				.($m->fixture_friendly ? '(' : '')
 				."{$blue['goals']} : {$white['goals']}"
@@ -315,6 +315,84 @@ $printDebug = (1 == $GLOBALS['current_user']->ID);
 
 	<?php Uwr1resultsView::poweredBy(); ?>
 </div>
+<script type="text/javascript">
+var hoverTeam;
+var clickTeam;
+
+function highlightTeam(teamName) {
+	jQuery("div#ranking tr").removeClass("hl");
+	jQuery("div.matchday tr").removeClass("hl");
+	jQuery("div#ranking td.tm").each(function(idx, el){
+		if (el.innerHTML == teamName) {
+			jQuery(el).parent().addClass("hl");
+		}
+	});
+	jQuery("div.matchday td.tm").each(function(idx, el){
+		if (el.innerHTML == teamName) {
+			jQuery(el).parent().addClass("hl");
+		}
+	});
+}
+
+// add event handlers to ranking
+jQuery(function(){
+	// select all div#ranking table tr
+	jQuery("div#ranking tr").each(function(idx, el){
+		var $tr = jQuery(el);
+		var $tds = $tr.children("td.tm");
+		if (0 == $tds.length)
+			return;
+
+		var teamName = $tds[0].innerHTML;
+		// onmouseover handler
+		$tr.mouseover(function(){
+			hoverTeam = teamName;
+			highlightTeam(hoverTeam);
+		});
+		// onmouseout handler
+		$tr.mouseout(function(){
+			highlightTeam(clickTeam);
+		});
+		// onclick handler
+		$tr.click(function(e){
+			window.location = "#team="+encodeURIComponent(teamName);
+			clickTeam = teamName;
+			highlightTeam(clickTeam);
+		});
+	});
+});
+
+// find URL parameters
+jQuery(function(){
+	var url = document.location.toString();
+	if (!url.match(/#/)) return; // the URL contains no anchor
+	var anchor = url.split('#')[1];
+	if (!anchor) return;
+	
+	// try fid (fixture ID)
+	var fid = anchor.match(/fid=(\d+)/);
+	if (null != fid) {
+		fid = fid[1];
+		if (fid) {
+			var elemId = '#fid'+fid;
+			var ot=jQuery(elemId).offset().top;
+			jQuery('html,body').animate({scrollTop: ot - 100}, 1000);
+			jQuery(elemId).effect('highlight', null, 7000);
+		}
+	}
+
+	// try team (team name)
+	var team = anchor.match(/team=(.+)/);
+	if (null != team) {
+		team = team[1];
+		if (team) {
+			team = decodeURIComponent(team);
+			clickTeam = team;
+			highlightTeam(clickTeam);
+		}
+	}
+});
+</script>
 <?php
 get_sidebar();
 get_footer();
