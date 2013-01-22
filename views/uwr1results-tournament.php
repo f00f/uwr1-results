@@ -67,12 +67,14 @@ function print_ranking(Uwr1resultsRanking $ranking) {
             print ' <a href="?nodv=0">Probiere den Direkten Vergleich aus</a> (beta).<br />';
         }
     }
+	$notes = $tournament->notes();
+	if ($notes) $notes .= '<br />';
     print 'Sortierung: Punkte, direkter Vergleich'
         . ($ranking->hasHead2HeadSituations()
             ? ($ranking->usesResolveH2H() ? '' : ' (wird in der hier angezeigten Tabelle nicht beachtet)')
             : '')
         . ', Tordifferenz, positive Tore.<br />'
-        . $tournament->notes().'<br />'
+		. $notes
 		. '</div>'
 //	print '<a class="notes-link" href="#anmerkungen">Anmerkungen zur Tabelle</a>'
 		. '</div>';
