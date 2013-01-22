@@ -59,9 +59,11 @@ function print_ranking(Uwr1resultsRanking $ranking, $dbgDV = false) {
 	print '<div class="notes">';
 	if ($ranking->hasHead2HeadSituations()) {
 		if ($ranking->usesResolveH2H()) {
+			/*
 			print 'Du benutzt den Direkten Vergleich (beta).'
 				.' <a href="/kontakt">Fehler/Probleme melden</a>.'
 				.' (<a href="?nodv=1">DV abschalten</a>)<br />';
+			*/
 			print 'Direkter Vergleich ist berücksichtigt zwischen '.$head2headComparisons.'.<br />';
 		} else {
 			print '* <strong>Achtung:</strong> Direkter Vergleich zwischen '.$head2headComparisons.' wird in der hier angezeigten Tabelle nicht beachtet!';
@@ -120,6 +122,7 @@ $printDebug = (1 == $GLOBALS['current_user']->ID);
 		. $league->shortName().'</div><br />';
 
     $useDV = ! (1 == @$_GET['nodv']);
+	/*
     print '<p class="notice"><strong>Neu: Direkter Vergleich (beta).</strong>';
     if ($useDV) {
         print ' In den Tabellen wird jetzt bei Punktgleichstand der Direkte Vergleich ausgewertet.'
@@ -132,6 +135,7 @@ $printDebug = (1 == $GLOBALS['current_user']->ID);
             . ' [<a href="?nodv=0">DV wieder aktivieren</a>]';
     }
     print '</p>';
+	*/
 
     if ($useDV) {
 		// direkter vergleich
