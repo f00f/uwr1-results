@@ -21,7 +21,10 @@ class Uwr1resultsHelper {
 	public static function slugify( $str ) {
 		$str = trim($str);
 		$str = strtolower($str);
-		$str = str_replace(' ', '-', $str);
+		$str = str_replace(
+				array(' ', '/'),
+				'-',
+				$str);
 		$str = str_replace(
 				array('ä', 'ö', 'ü', 'Ä', 'Ö', 'Ü', 'ß'),
 				array('ae', 'oe', 'ue', 'Ae', 'Oe', 'Ue', 'ss'),
