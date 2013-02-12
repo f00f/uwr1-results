@@ -256,7 +256,7 @@ class Uwr1resultsModel {
 		$values = array();
 		foreach ($this->dbMapping as $prop => $dbField) {
 			$fields[] = $dbField;
-			$values[] = (is_string($this->$prop()) ? "'".$this->$prop()."'" : $this->$prop());
+			$values[] = (is_string($this->$prop()) ? "'".trim($this->$prop())."'" : trim($this->$prop()));
 		}
 		$fieldsStr = "`" . implode("`, `", $fields) . "`";
 		$valuesStr = implode(", ", $values);
