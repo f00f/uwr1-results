@@ -64,7 +64,7 @@ class Uwr1resultsHelper {
 	 * @param $vars String[]   Global query_vars from Wordpress
 	 * @return String[]   Global query_vars for Wordpress
 	 */
-	public static function addQueryVars(&$vars) {
+	public static function addQueryVars($vars) {
 		$vars[] = 'league';
 		$vars[] = 'tournament';
 		//$vars[] = 'season';

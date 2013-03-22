@@ -133,6 +133,11 @@ SQL;
 		return $this->ranking($resolveH2H);
 	}
 
+	public function &rankingNoDV() {
+        $resolveH2H = false;
+		return $this->ranking($resolveH2H);
+	}
+
 	public function &ranking($resolveH2H = false) {
 		if (is_null($this->ranking)) {
 			$this->ranking = new Uwr1resultsRanking($this->results());
