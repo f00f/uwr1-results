@@ -238,6 +238,8 @@ SQL;
 		$res = $wpdb->query($sql);
 		
 		$this->notifyJsonCache($this->leagueSlug(), __FILE__);
+		do_action('uwr1results_edit_result');
+
 		return $res;
 	}
 
