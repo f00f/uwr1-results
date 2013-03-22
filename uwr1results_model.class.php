@@ -238,6 +238,9 @@ class Uwr1resultsModel {
 			;
 		mail('hannes@uwr1.de', $subject, $mail, "From: [JsonCache] Debug <jsoncache@uwr1.de>\n\n");
 		*/
+
+		do_action('uwr1results_cache_invalidated');
+
 		return;
 	}
 
