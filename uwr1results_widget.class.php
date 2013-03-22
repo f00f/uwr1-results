@@ -5,56 +5,41 @@ Author: Hannes Hofmann
 Author URI: http://uwr1.de/
 */
 
+require_once 'cached_widget.class.php';
 require_once 'uwr1res_config.inc.php';
 require_once 'uwr1results_view.class.php';
 
-class Uwr1resultsWidget {
-	/**
-	 * The instance of this object
-	 * Static will act as a global variabile
-	 * Private: make sure no one from outside will change this value
-	 * @static
-	 * @access private
-	 */
-	private static $instance=NULL;
+class Uwr1resultsWidget extends CachedWidget {
+	private static $staticCacheKey = 'cache.widget.uwr1results';
 
-	/**
-	 * Constructor
-	 * nothing to do, make sure that no one can build this object
-	 * @access private
-	 * @return void
-	 */
-	private function __construct() {  }
-	
-	/**
-	 * Clone function
-	 * Nothing to do
-	 * Make sure that no one will get a copy of this object
-	 * @access private
-	 * @return void
-	 */
-	private function __clone() {  }
-
-	/**
-	 * // TODO: write better comment
-	 */
-	static function instance() {
-		if (!self::$instance) {
-			self::$instance = new Uwr1resultsWidget();
-		}
-		return self::$instance;
+	function Uwr1resultsWidget() {
+		$this->WP_Widget('Uwr1results', __('Uwr1results'), array());
+		$this->m_cacheKey = self::$staticCacheKey;
 	}
 
-	function Init() {
+	/*
+	static function Init() {
 		if (!function_exists('register_sidebar_widget')) {
 			return;
 		}
 		register_sidebar_widget(__('UWR Ergebnisse'), array('Uwr1resultsWidget', 'show'), 'widget-uwr1results');
 		//register_widget_control(__('Kalenter'), array('Uwr1resultsWidget', 'controlPanel'), 300, 90);
 	}
+	*/
 
-	function show($args) {
+	/* ClearCache my be called statically by a WP hook */
+	static function ClearCache() {
+		delete_option(self::$staticCacheKey);
+	}
+
+	function widget($instance = '', $args = '') {
+		Uwr1resultsWidget::ClearCache();
+		$this->show($args, $instance);
+	}
+	
+	function show($args, $instance) {
 		extract($args);
+		extract($instance);
 		// load global configuration or default values
 		$options = get_option('uwr1results_widget');
 		$title = empty($options['title']) ? __('Letzte Ergebnisse') : $options['title'];
@@ -62,24 +47,56 @@ class Uwr1resultsWidget {
 		$num   = empty($options['num'])   ? 5 : $options['num'];
 		$detailed = false;
 		// local overrides
-		if (@$args['title']) $title = $args['title'];
-		if (@$args['days'])  $days  = $args['days'];
-		if (@$args['num'])   $num   = $args['num'];
-		if (@$args['detailed']) $detailed = $args['detailed'];
-		$linkInTitle = @$args['link_in_title'];
+		if (@$args['days']) $days = $args['days'];
+		if (@$args['num']) $num = $args['num'];
+		if (@$instance['title']) $title = $instance['title'];
+		if (@$instance['detailed']) $detailed = $instance['detailed'];
 
-		$rv = Uwr1resultsModelResult::instance()->findRecentResults2(array('days' => $days, 'num' => $num));
-		
+		// data args, known ones cleaned
+		$args['days']     = $days;
+		$args['num']      = $num;
+
+		// display args, known ones cleaned
+		$instance['title']    = $title;
+		$instance['detailed'] = $detailed;
+
+		$resultsData = $this->CacheLookup($args);
+
+		if (!$resultsData) {
+			$resultsData = (object) Uwr1resultsModelResult::instance()->findRecentResults2(array('days' => $days, 'num' => $num));
+
+			$expires = 0;
+			if (FALSE && 'days' == $resultsData['limit']) {
+				list($y, $m, $d) = explode('-', date('Y-m-d'));
+				$d++;
+				$exp_date = "{$y}-{$m}-{$d} 00:00:00";
+				$expires = strtotime($exp_date);
+			}
+			$this->StoreInCache($args, $resultsData, $expires);
+		}
+
+		print $this->GenerateOutput($resultsData, $args, $instance);
+	} // show
+
+	function GenerateOutput(&$resultsData, $args, $instance) {
+		extract($args);
+		extract($instance);
+		$linkInTitle = @$instance['link_in_title'];
+
 		if ($linkInTitle) {
-			if ('days' == $rv['limit']) { $title .= ' (letzte '.$days.' Tage)'; }
-			if ('num' == $rv['limit'] ) { $title .= ' (letzte '.$num.' Ergebnisse)'; }
+			if ('days' == $resultsData->limit) { $title .= ' (letzte '.$days.' Tage)'; }
+			if ('num' == $resultsData->limit ) { $title .= ' (letzte '.$num.' Ergebnisse)'; }
 			$title .= ' &mdash; <a class="uwr1results-icon" href="'.Uwr1resultsView::indexUrl().'">'.__('Alle Liga-Ergebnisse').'&nbsp;&raquo;</a>';
 		}
 
 		print str_replace('id="uwr1results"', 'id="uwr1results-widget"', $before_widget);
 		print $before_title . $title . $after_title;
 
-		if ('OK' == $rv['status']) {
+		if ('OK' != $resultsData->status) {
+			// 'OK" != $resultsData['status']
+			print $this->NoDataAvailable();
+		} else {
+			// 'OK" == $resultsData['status']
 			if ($detailed) {
 				print '<div class="widget_recent_results">';
 			} else {
@@ -87,7 +104,7 @@ class Uwr1resultsWidget {
 			}
 			//$b1 = ($detailed ? '<b>' : '');
 			//$b2 = ($detailed ? '</b>' : '');
-			foreach($rv['result'] as $r) {
+			foreach($resultsData->result as $r) {
 				if ($detailed) {
 					$user_info = get_userdata($r->user_ID);
 					print '<div class="res_entry">'
@@ -138,17 +155,16 @@ class Uwr1resultsWidget {
 				print '</table>';
 			}
 		}
-		else
-		{
-			// ! 'OK" == $rv['status']
-			$season = Uwr1resultsController::season();
-			$season = $season.'/'.($season+1); // TODO: make a function for that
-			print '<table><tr><td>'
-				. 'Es sind noch keine Ergebnisse f&uuml;r die Saison ' . $season . ' vorhanden.<br />'
-				. 'Falls Du welche weisst kannst Du sie <a href="http://uwr1.de/ergebnisse">hier eintragen</a>.'
-				. '</td></tr></table>';
-		}
 		print $after_widget;
+	}
+	
+	function NoDataAvailable() {
+		$season = Uwr1resultsController::season();
+		$season = $season.'/'.($season+1); // TODO: make a function for that
+		return '<table><tr><td>'
+			. 'Es sind noch keine Ergebnisse f&uuml;r die Saison ' . $season . ' vorhanden.<br />'
+			. 'Falls Du welche weisst kannst Du sie <a href="http://uwr1.de/ergebnisse">hier eintragen</a>.'
+			. '</td></tr></table>';
 	}
 
 	/**
@@ -196,5 +212,9 @@ class Uwr1resultsWidget {
 	}
 }
 
-// Run our code later in case this loads prior to any required plugins.
-add_action('widgets_init', array('Uwr1resultsWidget', 'Init') );
+// Register widget
+add_action('widgets_init', create_function('', 'return register_widget("Uwr1resultsWidget");'));
+
+// Invalidate cache whenever a match result has been changed
+    // the action 'uwr1results_cache_invalidated' whenever a match result was added/edited/deleted.
+	add_action('uwr1results_cache_invalidated', array('Uwr1resultsWidget', 'ClearCache'));
