@@ -33,7 +33,6 @@ class Uwr1resultsWidget extends CachedWidget {
 	}
 
 	function widget($instance = '', $args = '') {
-		Uwr1resultsWidget::ClearCache();
 		$this->show($args, $instance);
 	}
 	
