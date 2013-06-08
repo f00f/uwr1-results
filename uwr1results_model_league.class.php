@@ -204,13 +204,11 @@ SQL;
 			exit;
 		}
 	
-		$slug = Uwr1resultsHelper::slugify($slug);
-		$slug = Uwr1resultsHelper::sqlEscape($slug);
+		$slug = Uwr1resultsHelper::sqlEscape(Uwr1resultsHelper::slugify($slug));
 		// FIXME: make slug db-safe
 	
 		$leaguesTable   = parent::getTable(get_class($this));
 		$regionsTable   = parent::getTable('Uwr1resultsModelRegion');
-	
 	
 		$sql = "SELECT `l`.*, `r`.* FROM `{$leaguesTable}` AS `l`"
 			. " LEFT OUTER JOIN `{$regionsTable}` AS `r` ON `r`.`region_ID` = `l`.`region_ID`"
