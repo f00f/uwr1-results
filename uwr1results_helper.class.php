@@ -67,7 +67,7 @@ class Uwr1resultsHelper {
 	public static function addQueryVars($vars) {
 		$vars[] = 'league';
 		$vars[] = 'tournament';
-		//$vars[] = 'season';
+		$vars[] = 'season';
 		$vars[] = 'team';
 		// ajaxview, id for ajax
 		$vars[] = 'ajaxview';
@@ -133,9 +133,18 @@ class Uwr1resultsHelper {
 		*/
 
 		// Liga Ergebnisse
-		// new structure: /ergebnisse/liga/slug/
+		// league w/ season: /ergebnisse/liga/l-slug/season/
+		$keytagL = '%season%';
+		$keytagS = '%league%';
+		$wp_rewrite->add_rewrite_tag($keytagL, '([^\/]+)', 'league='); // must be matched by an entry in addQueryVars()
+		$wp_rewrite->add_rewrite_tag($keytagS, '([^\/]+)', 'season='); // must be matched by an entry in addQueryVars()
+		$keywords_structure = $wp_rewrite->root . UWR1RESULTS_BASEURL."/liga/{$keytagL}/{$keytagS}";
+		$keywords_rewrite = $wp_rewrite->generate_rewrite_rules($keywords_structure, $ep_mask, $paged, $feed, $forcomments, $walk_dirs, $endpoints);
+		$wp_rewrite->rules = $keywords_rewrite + $wp_rewrite->rules;
+
+		// league w/o season: /ergebnisse/liga/l-slug/
 		$keytag = '%league%';
-		$wp_rewrite->add_rewrite_tag($keytag, '(.+)', 'league='); // must be matched by an entry in addQueryVars()
+		$wp_rewrite->add_rewrite_tag($keytag, '([^\/]+)', 'league='); // must be matched by an entry in addQueryVars()
 		$keywords_structure = $wp_rewrite->root . UWR1RESULTS_BASEURL."/liga/{$keytag}";
 		$keywords_rewrite = $wp_rewrite->generate_rewrite_rules($keywords_structure, $ep_mask, $paged, $feed, $forcomments, $walk_dirs, $endpoints);
 		$wp_rewrite->rules = $keywords_rewrite + $wp_rewrite->rules;
