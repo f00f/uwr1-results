@@ -378,7 +378,11 @@ class Uwr1resultsController {
 	}
 
 	public static function season() {
-		// TODO: look for season in URL
+		global $wp_query;
+		$desiredSeason = intval($wp_query->query_vars['season']);
+		if ($desiredSeason) {
+			return $desiredSeason;
+		}
 		return UWR1RESULTS_SEASON;
 	}
 
@@ -408,14 +412,14 @@ class Uwr1resultsController {
 		return ('admin.php' == basename($_SERVER['SCRIPT_NAME']) && 'uwr1results' == $_GET['page']);
 	}
 
-	/**
-	 * // TODO: write better comment
-	 * Decides which page (view) to show
+	/** Decides which page (view) to display.
+	 *
+	 * @return: page name.
+	 *
 	 * Available pages are
-	 * * viewIndex - show a list of regions
-	 * * viewRegion - show a list of divisions
-	 * * viewDivision - show a list of fixtures (grouped by "spieltage")
-	 * * ... viewTeam, viewTable, ...
+	 * * index - show a list of regions, leagues, and tournaments
+	 * * league - show a list of fixtures (grouped by "spieltage")
+	 * * tournament - show a list of fixtures (grouped by "spieltage")
 	 */
 	static function whichView() {
 		if (false === Uwr1resultsController::isUwr1resultsUrl()) {
@@ -427,7 +431,7 @@ class Uwr1resultsController {
 		define('IS_UWR1RESULTS_VIEW', true);
 
 		if ($wp_query->query_vars['league']) {
-			Uwr1resultsModelLeague::instance()->findBySlug( $wp_query->query_vars['league'] );
+			Uwr1resultsModelLeague::instance()->findBySlug( $wp_query->query_vars['league'], Uwr1resultsController::season() );
 			if ( !Uwr1resultsModelLeague::instance()->found() ) {
 				new Uwr1resultsException('Diese Liga wurde nicht gefunden.');
 			}
@@ -463,12 +467,6 @@ class Uwr1resultsController {
 
 		// fallback / default
 		return 'index';
-
-		if (is_feed() || !empty($_GET['feed'])) {
-			trigger_error('Error in whichView: Feed');
-			return 'feed';
-		}
-		return 'current';
 	}
 
 /* not yet
