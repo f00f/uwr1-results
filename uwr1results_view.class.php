@@ -83,7 +83,7 @@ class Uwr1resultsView {
 		if ('index' == $view) {
 			$title = 'Unterwasserrugby Liga Ergebnisse der Saison '.$season;
 		} else if ('league' == $view) {
-			$title = 'Ergebnisse der ' . Uwr1resultsModelLeague::instance()->name() . ' im UWR (Saison ' . $season . ')';
+			$title = 'Ergebnisse der ' . Uwr1resultsModelLeague::instance()->name() . ' (Saison ' . $season . ')';
 		} else if ('tournament' == $view) {
 			$title = 'Ergebnisse des UWR Turniers ' . Uwr1resultsModelLeague::instance()->name();
 		}
