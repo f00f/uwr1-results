@@ -250,7 +250,7 @@ class Uwr1resultsView {
 	}
 
 	static function poweredBy() {
-		print '<div class="rs-footer" style="clear:both; padding-top:2em;">powered by <a href="'.self::indexUrl().'">uwr1results ' . UWR1RESULTS_VERSION . '</a>.</div>';
+		print '<div class="rs-footer">powered by <a href="'.self::indexUrl().'">uwr1results ' . UWR1RESULTS_VERSION . '</a>.</div>';
 	}
 
 	public static function editLink( $params ) {

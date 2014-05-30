@@ -65,7 +65,7 @@
 .bold		{ font-weight: bold;	}
 .private	{ color: #e64f69;	}
 
-#breadcrumbs     { font-size:80%; }
+#breadcrumbs     { font-size:12px; }
 
 .index.region    { font-size:14px;float:left; margin-right:1em; margin-bottom:1em; }
 
@@ -93,3 +93,9 @@ table.spielplan {
 			font-size:smaller;
 			color:#aaa;
 			}
+
+.rs-footer {
+	font-size: 12px;
+	clear:both;
+	padding-top:2em;
+}
