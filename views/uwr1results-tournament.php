@@ -212,7 +212,7 @@ $printDebug = (1 == $GLOBALS['current_user']->ID);
 					print '<div class="md-title"><h3>'
 						. $m->matchday_order . '. Spieltag am ' . Uwr1resultsView::mysqlToFullDate($m->matchday_date) . ' in ' . $m->matchday_location
 						. '</h3></div>';
-					print ' <div class="md-edit-link">';
+					print ' <div class="md-edit-link wp-core-ui">';
 					if ( Uwr1resultsHelper::checkPermission('save') ) {
 						if (0 == $matchdays[ $currentMatchday ]->fixture_count) {
 							$editLink = Uwr1resultsView::editLink(array(
@@ -227,7 +227,9 @@ $printDebug = (1 == $GLOBALS['current_user']->ID);
 							));
 							$editLinkTitle = 'Ergebnisse bearbeiten';
 						}
-						print '<a href="'.$editLink.'"><img src="/bilder/icons/pencil.png" height="16" width="16" alt="" /> '.$editLinkTitle.'</a>';
+						print '<span class="button">'
+							. '<a href="'.$editLink.'"><img src="/bilder/icons/pencil.png" height="16" width="16" alt="" /> '.$editLinkTitle.'</a>'
+							. '</span>';
 					} else {
 						print '<a href="'.wp_login_url().'"><img src="/bilder/icons/pencil.png" height="16" width="16" alt="' . __('Log in') . '" /> '.__('Log in').'</a>';
 					}
