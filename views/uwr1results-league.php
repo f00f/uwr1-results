@@ -178,9 +178,9 @@ $printDebug = (1 == $GLOBALS['current_user']->ID);
 				print '<div class="matchday">';
 				
 				print '<div class="md-header">';
-					print '<div class="md-title"><h4>'
+					print '<div class="md-title"><h3>'
 						. $m->matchday_order . '. Spieltag am ' . Uwr1resultsView::mysqlToFullDate($m->matchday_date) . ' in ' . $m->matchday_location
-						. '</h4></div>';
+						. '</h3></div>';
 					print ' <div class="md-edit-link">';
 					if ( Uwr1resultsHelper::checkPermission('save') ) {
 						if (0 == $matchdays[ $currentMatchday ]->fixture_count) {
