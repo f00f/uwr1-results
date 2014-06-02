@@ -127,7 +127,12 @@ SQL;
 			'comment'           => trim($_POST['comment']),
 		));
 
-		return $this->save();
+		$rv = $this->save();
+		if ($rv) {
+			$new_item = $this->findByFixtureId($this->fixtureId());
+			do_action('uwr1results_save_result', $new_item);
+		}
+		return $rv;
 	}
 	
 	public function saveMany() {
@@ -142,6 +147,8 @@ SQL;
 		}
 
 		$r = Uwr1resultsModelResult::instance();
+		$new_items = array();
+		$success = true;
 		foreach ($_POST['fx'] as $f) {
 			if ( '' === $f['goals_blue'] || '' === $f['goals_white']) {
 				continue;
@@ -161,20 +168,23 @@ SQL;
 			));
 			$rv = $this->save(false); // don't notifyJsonCache for each store
 			if (false === $rv) {
-				$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . parent::getTable(get_class($this)));
-				return false;
+				$success = false;
+				break;
 			}
+
+			$new_item = $this->findByFixtureId($f['id']);
+			$new_items[] = $new_item;
 		}
 
 		// eventually update cache
 		$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . parent::getTable(get_class($this)));
-
-		return true;
+		do_action('uwr1results_save_result', $new_items);
+		return $success;
 	} // saveMany
 
 	// TODO: should this be private?
 	// Controller calls populateAndSave() or saveMany()
-	public function save() {
+	public function save($notifyJsonCache = true) {
 		global $wpdb;
 		// TODO: check permissions
 		Uwr1resultsHelper::enforcePermission( 'save' );
@@ -237,8 +247,9 @@ SQL;
 //		print $sql;exit;
 		$res = $wpdb->query($sql);
 		
-		$this->notifyJsonCache($this->leagueSlug(), __FILE__);
-		do_action('uwr1results_edit_result');
+		if ($res && $notifyJsonCache) {
+			$this->notifyJsonCache($this->leagueSlug(), __FILE__);
+		}
 
 		return $res;
 	}
