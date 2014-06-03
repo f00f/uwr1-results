@@ -89,6 +89,8 @@ SQL;
 		Uwr1resultsHelper::enforcePermission( 'save' );
 
 		$t =& Uwr1resultsModelTeam::instance();
+		$new_items = array();
+		$success = true;
 		foreach ($_POST['data'] as $id => $f) {
 			if ( empty($f['team_blue']) || empty($f['team_white']) ) {
 				continue;
@@ -150,15 +152,22 @@ SQL;
 			));
 			$rv = $this->save(false); // don't notifyJsonCache for each store
 			if (false === $rv) {
-				$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . parent::getTable(get_class($this)));
-				return false;
+				$success = false;
+				break;
 			}
+
+			if (! (int)$f['id']) {
+				global $wpdb;
+				$f['id'] = $wpdb->insert_id;
+			}
+			$new_item = $this->findById((int)$f['id']);
+			$new_items[] = $new_item;
 		}
 
 		// eventually update cache
 		$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . parent::getTable(get_class($this)));
 
-		return true;
+		return $success;
 	} // saveMany
 
 

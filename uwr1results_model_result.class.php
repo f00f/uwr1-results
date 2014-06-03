@@ -79,10 +79,14 @@ SQL;
 		$this->_wpdb->query($sql);
 	}
 
-	protected function leagueSlug() {
-		$rmf = Uwr1resultsModelFixture::instance();
-		$fixture  = $rmf->findById($this->fixtureId());
+	public function leagueSlug() {
+		$fixture = $this->getFixture();
 		return $fixture->leagueSlug();
+	}
+
+	public function getFixture() {
+		$rmf = Uwr1resultsModelFixture::instance();
+		return $rmf->findById($this->fixtureId());
 	}
 
 	private function updatePoints() {
@@ -129,7 +133,7 @@ SQL;
 
 		$rv = $this->save();
 		if ($rv) {
-			$new_item = $this->findByFixtureId($this->fixtureId());
+			$new_item = $this->findById($this->fixtureId());
 			do_action('uwr1results_save_result', $new_item);
 		}
 		return $rv;
@@ -154,8 +158,8 @@ SQL;
 				continue;
 			}
 			$r->populate(array(
-				'id'                => $f['id'],
-				'fixtureId'         => $f['id'],
+				'id'                => (int)$f['id'],
+				'fixtureId'         => (int)$f['id'],
 				'userId'            => $current_user->ID,
 				'modified'          => 'NOW()',
 				'goalsBlue'         => 0 + $f['goals_blue'],
@@ -172,7 +176,7 @@ SQL;
 				break;
 			}
 
-			$new_item = $this->findByFixtureId($f['id']);
+			$new_item = $this->findById((int)$f['id']);
 			$new_items[] = $new_item;
 		}
 
@@ -251,6 +255,7 @@ SQL;
 			$this->notifyJsonCache($this->leagueSlug(), __FILE__);
 		}
 
+		// TODO: change return type: $result_id on success, false otherwise
 		return $res;
 	}
 
