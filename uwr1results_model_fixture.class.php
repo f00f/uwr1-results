@@ -95,6 +95,8 @@ SQL;
 		$new_items = array();
 		$success = true;
 		foreach ($_POST['data'] as $id => $f) {
+			$f['team_blue'] = trim(@$f['team_blue']);
+			$f['team_white'] = trim(@$f['team_white']);
 			if ( empty($f['team_blue']) || empty($f['team_white']) ) {
 				continue;
 			}
