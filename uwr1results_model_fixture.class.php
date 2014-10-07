@@ -88,6 +88,9 @@ SQL;
 		// TODO: check permissions
 		Uwr1resultsHelper::enforcePermission( 'save' );
 
+		// Set matchdayId here, because it is used by leagueSlug, which in turn is used while saving teams.
+		$this->set('matchdayId', (int) $matchdayId);
+
 		$t =& Uwr1resultsModelTeam::instance();
 		$new_items = array();
 		$success = true;
