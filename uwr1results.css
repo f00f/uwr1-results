@@ -88,7 +88,7 @@ table.spielplan {
 	table.spielplan td.num       { text-align:center; }
 	table.spielplan td.r,
 	table.spielplan td.ergebnis  { text-align:right; }
-	table.spielplan td.kommentar { white-space:normal; }
+	table.spielplan td.kommentar { white-space:normal; padding-left: 1em; }
 		table.spielplan td .detail {
 			font-size:smaller;
 			color:#aaa;

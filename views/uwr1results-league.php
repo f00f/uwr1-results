@@ -260,7 +260,7 @@ $printDebug = (1 == $GLOBALS['current_user']->ID);
 				."{$blue['goals']} : {$white['goals']}"
 				.($m->fixture_friendly ? ')<sup><a href="#fn-F">F</a></sup>' : '')
 				.'</td>'
-				."<td class='comment'>{$m->result_comment}</td>"
+				."<td class='kommentar'>{$m->result_comment}</td>"
 				."<td class='user'>{$author->display_name}</td>"
 				;
 			if ( Uwr1resultsHelper::checkPermission('save') ) {
