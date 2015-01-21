@@ -260,15 +260,15 @@ $printDebug = (1 == $GLOBALS['current_user']->ID);
 				."{$blue['goals']} : {$white['goals']}"
 				.($m->fixture_friendly ? ')<sup><a href="#fn-F">F</a></sup>' : '')
 				.'</td>'
-				."<td>{$m->result_comment}</td>"
-				."<td>{$author->display_name}</td>"
+				."<td class='comment'>{$m->result_comment}</td>"
+				."<td class='user'>{$author->display_name}</td>"
 				;
 			if ( Uwr1resultsHelper::checkPermission('save') ) {
 				$editLink = Uwr1resultsView::editLink(array(
 					'action' => 'edit_result',
 					'fixture_id' => $m->fixture_ID,
 					));
-				print '<td align="center">'
+				print '<td class="actions" align="center">'
 					. '<a href="'.$editLink.'"><img src="/bilder/icons/pencil.png" height="16" width="16" alt="' . __('Edit') . '" /></a>'
 					. '</td>';
 			}
