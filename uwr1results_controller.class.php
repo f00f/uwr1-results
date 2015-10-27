@@ -431,9 +431,11 @@ class Uwr1resultsController {
 		define('IS_UWR1RESULTS_VIEW', true);
 
 		if ($wp_query->query_vars['league']) {
-			Uwr1resultsModelLeague::instance()->findBySlug( $wp_query->query_vars['league'], Uwr1resultsController::season() );
+			$myLeague = $wp_query->query_vars['league'];
+			$mySeason = Uwr1resultsController::season();
+			Uwr1resultsModelLeague::instance()->findBySlug( $myLeague, $mySeason );
 			if ( !Uwr1resultsModelLeague::instance()->found() ) {
-				new Uwr1resultsException('Diese Liga wurde nicht gefunden.');
+				new Uwr1resultsException("Die Liga '{$myLeague}' wurde in der Saison '{$mySeason}' nicht gefunden.");
 			}
 			return 'league';
 		}
@@ -449,9 +451,10 @@ class Uwr1resultsController {
 		if ($wp_query->query_vars['ajaxview']) {
 			$av =& $wp_query->query_vars['ajaxview'];
 			if ('ranking' == $av) {
-				Uwr1resultsModelLeague::instance()->findBySlug( $wp_query->query_vars['q'] );
+				$myQ = $wp_query->query_vars['q'];
+				Uwr1resultsModelLeague::instance()->findBySlug( $myQ );
 				if ( !Uwr1resultsModelLeague::instance()->found() ) {
-					new Uwr1resultsException('Diese Liga wurde nicht gefunden.');
+					new Uwr1resultsException('Diese Liga wurde nicht gefunden [myQ = '{$myQ}'].');
 				}
 				if (2 == @$_GET['v']) {
 					$av .= '-v2'; // use version 2
