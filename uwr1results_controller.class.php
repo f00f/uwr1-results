@@ -454,7 +454,7 @@ class Uwr1resultsController {
 				$myQ = $wp_query->query_vars['q'];
 				Uwr1resultsModelLeague::instance()->findBySlug( $myQ );
 				if ( !Uwr1resultsModelLeague::instance()->found() ) {
-					new Uwr1resultsException('Diese Liga wurde nicht gefunden [myQ = '{$myQ}'].');
+					new Uwr1resultsException("Diese Liga wurde nicht gefunden [myQ = '{$myQ}'].");
 				}
 				if (2 == @$_GET['v']) {
 					$av .= '-v2'; // use version 2
