@@ -229,7 +229,10 @@ $printDebug = (1 == $GLOBALS['current_user']->ID);
 	
 			if (!$m->fixture_ID) { continue; }
 	
-			if (is_null($m->result_goals_b) || is_null($m->result_goals_w)) {
+			if (is_null($m->result_goals_b)
+				|| is_null($m->result_goals_w)
+				|| $m->result_goals_b < 0
+				|| $m->result_goals_w < 0) {
 				$m->result_goals_b = '--';
 				$m->result_goals_w = '--';
 			}
