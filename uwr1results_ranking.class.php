@@ -23,6 +23,9 @@ class Uwr1resultsRanking {
                 $this->rnk[ $f->t_w_ID ]['name'] = $f->t_w_name;
             }
             if (!$f->result_ID) { continue; } // don't count fixtures that don't have results
+			if ($f->result_goals_b < 0 || $f->result_goals_w < 0) {
+				continue;// don't count games with a negative score
+			}
             if ($f->fixture_friendly) {
                 // don't take friendly games into account for ranking
                 $this->rnk[ $f->t_b_ID ]['friendlyMatchesPlayed']++;
