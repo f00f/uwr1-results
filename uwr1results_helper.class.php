@@ -34,7 +34,15 @@ class Uwr1resultsHelper {
 	}
 	
 	public static function sqlEscape( &$str ) {
-		return mysql_escape_string( $str );
+		global $wpdb;
+		$escapedValue = '';
+		if (is_numeric($str)) {
+			$escapedValue = '' . $str;
+		} else if (is_string($str)) {
+			$escapedValue = $wpdb->_real_escape($str);
+		}
+		// ignore other types
+		return $escapedValue;
 	}
 	
 	public static function checkPermission( $perm='save' ) {
