@@ -6,10 +6,8 @@ Author URI: http://uwr1.de/
 */
 
 # BEGIN OF CONFIG
-//define('UWR1RESULTS_CUR_SEASON', 7); // 7 means "started in 2007", i.e. 2007/2008
 define('UWR1RESULTS_BASEURL', 'ergebnisse');
 define('UWR1RESULTS_URL', 'http://'.$_SERVER['HTTP_HOST'].'/'.UWR1RESULTS_BASEURL);
-//define('UWR1RESULTS_URL', 'http://'.$_SERVER['HTTP_HOST'].'/'.UWR1RESULTS_BASEURL.'/');
 
 // Define the table for the plugin. (no need to change)
 global $wpdb;
@@ -29,7 +27,7 @@ define('UWR1RESULTS_PAGE_ID_LEAGUE_PX',     UWR1RESULTS_PAGE_ID_PX.'76'); // 76 
 define('UWR1RESULTS_PAGE_ID_TOURNAMENT_PX', UWR1RESULTS_PAGE_ID_PX.'84'); // 76 = hexdec(bin2hex('L'))
 //define('UWR1RESULTS_PAGE_ID_LEAGUE', UWR1RESULTS_PAGE_ID_PREFIX.'76'.LEAGUE_ID); // 76 = hexdec(bin2hex('L'))
 
-define('UWR1RESULTS_SEASON', 2013);// first year of the season
+define('UWR1RESULTS_SEASON', 2015);// first year of the season
 define('UWR1RESULTS_TOURNAMENT_REGION', -1);
 
 define('UWR1RESULTS_JSON_CACHE_URL', 'http://uwr1cdn.appspot.com/jc/json');
@@ -41,7 +39,7 @@ define('UWR1RESULTS_CAPABILITIES_ADD',  'read');
 define('UWR1RESULTS_CAPABILITIES_EDIT',  'edit_others_posts');
 # END OF CONFIG
 
-define('UWR1RESULTS_VERSION', '1.4');
+define('UWR1RESULTS_VERSION', '1.5');
 define('UWR1RESULTS_AJAX_API_VERSION', '2');
 
 define('UWR1RESULTS_TBL_REGIONS',   UWR1RESULTS_TBL_PRE . 'regions'  );
