@@ -84,13 +84,14 @@ SQL;
 		return $this->properties[ 'name' ];
 	}
 
-
 	protected function leagueSlug() {
-		$rml = Uwr1resultsModelLeague::instance();
-		$league   = $rml->findById($this->leagueId());
-		return $league->leagueSlug();
+		return $this->getLeague()->leagueSlug();
 	}
 	
+	public function getLeague() {
+		$rml = Uwr1resultsModelLeague::instance();
+		return $rml->findById($this->leagueId());
+	}
 
 	public function saveMany($leagueId) {
 		if (!$leagueId) {
