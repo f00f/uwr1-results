@@ -72,13 +72,14 @@ SQL;
 		$this->_wpdb->query($sql);
 	}
 
-
 	protected function leagueSlug() {
-		$rmm = Uwr1resultsModelMatchday::instance();
-		$matchday = $rmm->findById($this->matchdayId());
-		return $matchday->leagueSlug();
+		return $this->getMatchday()->leagueSlug();
 	}
 
+	public function getMatchday() {
+		$rmm = Uwr1resultsModelMatchday::instance();
+		return $rmm->findById($this->matchdayId());
+	}
 
 	public function saveMany($matchdayId) {
 		if (!$matchdayId) {
@@ -165,13 +166,13 @@ SQL;
 				global $wpdb;
 				$f['id'] = $wpdb->insert_id;
 			}
-			$new_item = $this->findById((int)$f['id']);
+			$new_item = clone $this->findById((int)$f['id']);
 			$new_items[] = $new_item;
 		}
 
 		// eventually update cache
 		$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . parent::getTable(get_class($this)));
-
+		do_action('uwr1results_save_fixtures', $new_items);
 		return $success;
 	} // saveMany
 
