@@ -176,47 +176,56 @@ SQL;
 				break;
 			}
 
-			$new_item = $this->findById((int)$f['id']);
+			$new_item = clone $this->findById((int)$f['id']);
 			$new_items[] = $new_item;
 		}
 
 		// eventually update cache
 		$this->notifyJsonCache($this->leagueSlug(), __CLASS__ . ' -- ' . parent::getTable(get_class($this)));
-		do_action('uwr1results_save_result', $new_items);
+		do_action('uwr1results_save_results', $new_items);
 		return $success;
 	} // saveMany
 
 	// TODO: should this be private?
 	// Controller calls populateAndSave() or saveMany()
+	// Do not call hook uwr1results_save_result in here
 	public function save($notifyJsonCache = true) {
 		global $wpdb;
 		// TODO: check permissions
 		Uwr1resultsHelper::enforcePermission( 'save' );
 
 		// check if a result for this fixture already exists.
-		// otherwise, submitters get overwritten and that sucks.
+		// otherwise, the submitter name get overwritten and that sucks.
 		$doSave = false;
-		// does this work, or does it modify $this?
-		// the latter would suck, esp. b/c we're a singleton.
-		//$oldResult = $this->findById($this->id());
-		// TODO: yep, it does modify $this!
 
+		// kludge: use an internal second instance of this class
+		$tmpInstance = new Uwr1resultsModelResult();
+		$oldResult = $tmpInstance->findById($this->id());
+
+		$this->updatePoints();
+		$changes = Uwr1resultsModel::diff($oldResult->properties, $this->properties);
+		// ignore all fields which are not relevant for the decission of $doSave
+		$ignoreFields = array('userId', 'modified',
+							'goalsHalfBlue', 'goalsHalfWhite',
+							'goalsRegularBlue', 'goalsRegularWhite');
+		foreach ($ignoreFields as $field) {
+			unset($changes->$field);
+		}
 
 		// all cases where an update is needed:
 		// 1) new result (there is no old result)
-		if (!$doSave && !$oldResult) {
+		if (!$doSave && !@$oldResult->id) {
 			$doSave = true;
 		}
 		// 2) result changed (we optimistically assume the new one is a correction)
-		if (!$doSave &&
-				($this->goalsBlue() != $oldResult->goalsBlue()
-				|| $this->goalsWhite() != $oldResult->goalsWhite())
+		if (!$doSave && 
+			(isset($changes->goalsBlue) || isset($changes->goalsWhite))
 			) {
 			$doSave = true;
 		}
 		// 3) comment changed and not set to empty string
-		$newComment = trim($this->comment());
-		if (!$doSave && ($this->comment() != $oldResult->comment()) && !empty($newComment)) {
+		$newComment = trim(@$changes->comment['new']);
+		if (!$doSave && !empty($newComment)) {
 			$doSave = true;
 		}
 		unset($newComment);
@@ -225,6 +234,16 @@ SQL;
 
 
 		$this->updatePoints();
+		
+		// re-compute $changes after updatePoints
+		$changes = Uwr1resultsModel::diff($oldResult->properties, $this->properties);
+		// ignore fields which are not user-settable
+		$ignoreFields = array('modified',
+							'goalsHalfBlue', 'goalsHalfWhite',
+							'goalsRegularBlue', 'goalsRegularWhite');
+		foreach ($ignoreFields as $field) {
+			unset($changes->$field);
+		}
 
 		// escape and quote $comment
 		$this->set( 'comment', "'" . Uwr1resultsHelper::sqlEscape( $this->comment() ) . "'" );
@@ -299,7 +318,7 @@ SQL;
 		if (!$seasonId) $seasonId = Uwr1resultsController::season();
 
 		$team_ids = implode(', ', $teamIds);
- 		$sql = "SELECT `r`.*, `f`.*,"
+ 		$sql = "SELECT `r`.*, `f`.*, `m`.`matchday_date`,"
  			. " `t_b`.`team_ID` AS `t_b_ID`, `t_b`.`team_name` AS `t_b_name`,"
  			. " `t_w`.`team_ID` AS `t_w_ID`, `t_w`.`team_name` AS `t_w_name`"
 			. " FROM `{$resultsTable}` AS `r`"
@@ -308,8 +327,11 @@ SQL;
 			. " LEFT JOIN `{$teamsTable}` AS `t_b` ON `t_b`.`team_ID` = `f`.`fixture_team_blue`"
 			. " LEFT JOIN `{$teamsTable}` AS `t_w` ON `t_w`.`team_ID` = `f`.`fixture_team_white`"
 			. " WHERE ( `f`.`fixture_team_blue`  IN ({$team_ids})"
-			. "   AND `f`.`fixture_team_white` IN ({$team_ids}) )"
-			. "   AND `m`.`season_id` = {$seasonId}";
+			. "      OR `f`.`fixture_team_white` IN ({$team_ids}) )"
+			. "   AND `m`.`season_id` = {$seasonId}"
+			. " ORDER BY `matchday_date` DESC"
+			//. "          ``"
+			;
 		return $this->_wpdb->get_results($sql);
 	}
 /*
