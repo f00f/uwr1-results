@@ -277,4 +277,91 @@ class Uwr1resultsModel {
 		}
 		return $res;
 	}
+
+	protected static function diff(&$old, &$new) {
+		if (is_object($old) && is_object($new)) {
+			return self::diff_obj($old, $new);
+		}
+		if (is_array($old) && is_array($new)) {
+			return self::diff_arr($old, $new);
+		}
+		// diff not possible
+		$changes = new stdClass();
+		$changes->__type = array(
+			'change' => 'changed',
+			'old' => gettype($old),
+			'new' => gettype($new),
+		);
+		return $changes;
+	}
+	
+	protected static function diff_arr(&$old, &$new) {
+		$changes = new stdClass();
+
+		// find added and changed fields
+		foreach ($new as $field => $val) {
+			if (!isset($old[$field])) {
+				// added
+				$changes->$field = array(
+					'change' => 'added',
+					'new' => $val,
+				);
+			} else if ($old[$field] != $val) {
+				// changed
+				$changes->$field = array(
+					'change' => 'changed',
+					'old' => $old[$field],
+					'new' => $val,
+				);
+			}
+		}
+
+		// find removed fielderties
+		foreach ($old as $field => $val) {
+			if (!isset($new[$field])) {
+				$changes->$field = array(
+					'change' => 'removed',
+					'old' => $val,
+				);
+			}
+		}
+
+		return $changes;
+	}
+	
+	protected static function diff_obj(&$old, &$new) {
+		$changes = new stdClass();
+		$new_props = get_object_vars($new);
+		$old_props = get_object_vars($old);
+
+		// find added and changed properties
+		foreach ($new_props as $prop => $val) {
+			if (!isset($old->$prop)) {
+				// added
+				$changes->$prop = array(
+					'change' => 'added',
+					'new' => $new->$prop,
+				);
+			} else if ($old->$prop != $val) {
+				// changed
+				$changes->$prop = array(
+					'change' => 'changed',
+					'old' => $old->$prop,
+					'new' => $new->$prop,
+				);
+			}
+		}
+
+		// find removed properties
+		foreach ($old_props as $prop => $val) {
+			if (!isset($new->$prop)) {
+				$changes->$prop = array(
+					'change' => 'removed',
+					'old' => $old->$prop,
+				);
+			}
+		}
+
+		return $changes;
+	}
 } // Uwr1resultsModel
