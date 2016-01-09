@@ -142,10 +142,10 @@ class Uwr1resultsHelper {
 
 		// Liga Ergebnisse
 		// league w/ season: /ergebnisse/liga/l-slug/season/
-		$keytagL = '%season%';
-		$keytagS = '%league%';
+		$keytagL = '%league%';
+		$keytagS = '%season%';
 		$wp_rewrite->add_rewrite_tag($keytagL, '([^\/]+)', 'league='); // must be matched by an entry in addQueryVars()
-		$wp_rewrite->add_rewrite_tag($keytagS, '([^\/]+)', 'season='); // must be matched by an entry in addQueryVars()
+		$wp_rewrite->add_rewrite_tag($keytagS, '(2[0-9\-]+)', 'season='); // must be matched by an entry in addQueryVars()
 		$keywords_structure = $wp_rewrite->root . UWR1RESULTS_BASEURL."/liga/{$keytagL}/{$keytagS}";
 		$keywords_rewrite = $wp_rewrite->generate_rewrite_rules($keywords_structure, $ep_mask, $paged, $feed, $forcomments, $walk_dirs, $endpoints);
 		$wp_rewrite->rules = $keywords_rewrite + $wp_rewrite->rules;
