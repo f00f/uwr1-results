@@ -22,7 +22,7 @@ $ranking =& $league->ranking();
  */
 $rankingFlat = array();
 $rank = 0;
-foreach ($ranking as $r) {
+foreach ($ranking->rnk as $r) {
 	// escape --- (&mdash;)
 	if (!is_int($r['goalsDiff'])) { $r['goalsDiff'] = '"' . $r['goalsDiff'] . '"'; }
 	if (!is_int($r['pointsPos'])) { $r['pointsPos'] = '"' . $r['pointsPos'] . '"'; }

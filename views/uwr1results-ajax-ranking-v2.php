@@ -14,18 +14,18 @@ if (@$_GET['dbg']) {
 
 // this should be in the controller, but it's more convenient to have it here - for now.
 $league =& Uwr1resultsModelLeague::instance();
-$ranking =& $league->ranking();
-
+$ranking =& $league->rankingDV();
 
 /**
  * Display code for regions & leagues listing
  */
 $rankingFlat = array();
 $rank = 0;
-foreach ($ranking as $r) {
+foreach ($ranking->rnk as $r) {
 	// escape --- (&mdash;)
 	if (!is_int($r['goalsDiff'])) { $r['goalsDiff'] = '"' . $r['goalsDiff'] . '"'; }
 	if (!is_int($r['pointsPos'])) { $r['pointsPos'] = '"' . $r['pointsPos'] . '"'; }
+	if (!is_int($r['matchesPlayed'])) { $r['matchesPlayed'] = '"' . $r['matchesPlayed'] . '"'; }
 	$rankingFlat[] = '{'
 		// r = rang
 		. '"r":'       . ++$rank // '"' . sprintf('%02d', ++$rank) . '"'
@@ -42,7 +42,7 @@ foreach ($ranking as $r) {
 		. '}';
 }
 
-$count = count($ranking);
+$count = count($ranking->rnk);
 if ($count > 0) {
 	$status = 'OK';
 } else {
@@ -56,7 +56,7 @@ if (@$_GET['jsonp']) {
 }
 print $jsonp1.'{'
 	. '"cver":'.UWR1RESULTS_AJAX_API_VERSION // Current VERsion
-	. '"s":"'.$status.'"'
+	. ',"s":"'.$status.'"'
 //	. ',"type":"rnk"'
 	. ',"cnt":' . $count
 	. ',"res":[' // open results array
