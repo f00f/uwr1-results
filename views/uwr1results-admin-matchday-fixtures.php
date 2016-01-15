@@ -59,7 +59,7 @@ print '	<div id="poststuff" class="metabox-holder has-right-sidebar">';
 
 print '<div id="matchday-meta" style="margin-bottom:0.5em">';
 if ( $matchdayName ) {
-	print '<div>'.$matchdayName.'</div>';
+	print $matchdayName;
 }
 
 $dateTimeLocation = '';
@@ -70,7 +70,7 @@ if ( $matchday->location() ) {
 	$dateTimeLocation .= ' in '.$matchday->location();
 }
 if ( $dateTimeLocation ) {
-	print 'ausgetragen'.$dateTimeLocation;
+	print ' ausgetragen'.$dateTimeLocation;
 }
 print '</div>';// matchday-meta
 
@@ -124,12 +124,12 @@ print '<div id="side-info-column" class="inner-sidebar">'
 // form content
 print '<div id="post-body" class="has-sidebar">'
 	. '<div id="post-body-content" class="has-sidebar-content">'
-	. '<table class="widefat fixed">'
+	. '<table class="widefat">'
 	. '<thead><tr>'
-	. '<th class="manage-column">Spiel Nr.</th>'
+	. '<th class="manage-column">Spiel<br>Nr.</th>'
 	. '<th class="manage-column">Blau</th>'
 	. '<th class="manage-column">Weiß</th>'
-	. '<th class="manage-column">Freundschaftsspiel</th>'
+	. '<th class="manage-column">Freundschafts<br>spiel</th>'
 	. '</tr></thead>';
 //print_r($fixtures);
 $fixtureNumberOnMatchday = 0;
@@ -137,17 +137,17 @@ $alternate = false;
 foreach ($fixtures as $f) {
 	$alternate = !$alternate;
 	print '<tr'.($alternate ? ' class="alternate"' : '').'>'
-		. '<th>Spiel ' . ++$fixtureNumberOnMatchday . ':</th>'
+		. '<th>' . ++$fixtureNumberOnMatchday . ':</th>'
 		. '<td>'
 		. '<input type="hidden" name="data['.$f->fixture_ID.'][id]" value="'.$f->fixture_ID.'" />'
 		. '<input type="hidden" name="data['.$f->fixture_ID.'][order]" value="'.$f->fixture_order.'" />'
-		. '<input class="auto-team" name="data['.$f->fixture_ID.'][team_blue]" value="'.$f->t_b_name.'" />'
+		. '<input class="auto-team" name="data['.$f->fixture_ID.'][team_blue]" value="'.$f->t_b_name.'" size="15" />'
 		. '</td>'
 		. '<td>'
-		. '<input class="auto-team" name="data['.$f->fixture_ID.'][team_white]" value="'.$f->t_w_name.'" />'
+		. '<input class="auto-team" name="data['.$f->fixture_ID.'][team_white]" value="'.$f->t_w_name.'" size="15" />'
 		. '</td>'
 		. '<td>'
-		. '<input id="data['.$f->fixture_ID.'][friendly]" name="data['.$f->fixture_ID.'][friendly]" type="checkbox" '.($f->fixture_friendly ? 'checked="checked" ' : '').'/> <label for="data['.$f->fixture_ID.'][friendly]">Freundschaftsspiel</label>'
+		. '<input id="data['.$f->fixture_ID.'][friendly]" name="data['.$f->fixture_ID.'][friendly]" type="checkbox" '.($f->fixture_friendly ? 'checked="checked" ' : '').'/> <label for="data['.$f->fixture_ID.'][friendly]">Freund.</label>'
 		. '</td>'
 		. '</tr>';
 }
@@ -161,8 +161,15 @@ print '</table>'
 		. '<img src="http://'.$_SERVER['HTTP_HOST'].'/bilder/icons/add.png" alt="+" style="vertical-align:middle;margin-bottom:3px;" /> <button class="button" onclick="addInputs(); return false;">Spielpaarung hinzufügen</button>'
 	. '</div>';
 ?>
+
+<div id="accordion">
+
+<h2>CSV Import</h2>
+<!-- .ui-accordion-header span: show -->
+<!-- .ui-accordion-header-active span: hide -->
+<div>
 <a name="csv-import"></a>
-<h2>CSV Import <small>(beta)</small></h2>
+
 <p>
 <strong>Hier kannst Du mehrere Spielpaarungen auf einmal im CSV Format eingeben.</strong><br />
 Im einfachsten Fall kannst Du die Begegnungen aus Excel kopieren und hier einfügen.
@@ -189,14 +196,28 @@ Diese Funktion ist allerdings neu und noch wenig getestet. Viel Glück ;-) Ich w
 	<br class="clear" />
 </div>
 <p><a name="csv-help-format"></a>
-<strong>Hinweise zum Format der Eingabedaten</strong>
-<ul style="list-style:disc inside none">
-<li>Pro Spielpaarung eine Zeile.</li>
-<li>Pro Zeile gibt es drei Felder: <tt>blau,weiss,Freundschaftsspiel</tt></li>
-<li>Das dritte Feld (Freundschaftsspiel) ist optional. Nur wenn dort eine <tt>1</tt> steht wird die Paarung als Freundschaftsspiel gespeichert.</li>
-<li>Statt Kommas sind auch Tabs als Trennzeichen erlaubt (so kopiert es Excel), es muss nur einheitlich sein.</li>
-</ul>
+  <strong>Hinweise zum Format der Eingabedaten</strong>
+  <ul style="list-style:disc inside none">
+  <li>Pro Spielpaarung eine Zeile.</li>
+  <li>Pro Zeile gibt es drei Felder: <tt>blau,weiss,Freundschaftsspiel</tt></li>
+  <li>Das dritte Feld (Freundschaftsspiel) ist optional. Nur wenn dort eine <tt>1</tt> steht wird die Paarung als Freundschaftsspiel gespeichert.</li>
+  <li>Statt Kommas sind auch Tabs als Trennzeichen erlaubt (so kopiert es Excel), es muss nur einheitlich sein.</li>
+  </ul>
 </p>
+</div><!-- accordion content -->
+
+</div><!-- accordion -->
+
+<script>
+jQuery(document).ready(function() {
+	jQuery('#accordion').accordion({
+		header: "h2",
+		collapsible: true,
+		active: false,
+	});
+});
+</script>
+
 <script>
 function disableApplyCSV() {
 	jQuery('#apply-csv').prop('disabled', true);
@@ -239,10 +260,9 @@ function showCSVPreview() {
 		var game = data[i];
 		if (game.length < 2) { continue; }
 		nr++;
-		var b = game[0];
-		var w = game[1];
-		var f = false;
-		if (1 == game[2]) f = true;
+		var b = game[0].trim();
+		var w = game[1].trim();
+		var f = (1 == game[2]);
 		var str = nr + ': ' + b + ' &mdash; ' + w + ' ' + (f ? '[F]' : '[ernst]') + "\n";
 		preview += str;
 		

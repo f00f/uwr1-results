@@ -124,10 +124,10 @@ print '<div class="submitbox" id="submitlink">'
 // form content
 print '<div id="post-body" class="has-sidebar">'
 	. '<div id="post-body-content" class="has-sidebar-content">'
-	. '<table class="widefat fixed">'
+	. '<table class="widefat">'
 	. '<thead><tr>'
 	. '<th class="manage-column">Spieltag</th>'
-	. '<th class="manage-column">Datum (z.B. 2008-12-31)</th>'
+	. '<th class="manage-column">Datum<br>(z.B.&nbsp;2008-12-31)</th>'
 	. '<th class="manage-column">Ort</th>'
 	. '<th class="manage-column">Aktionen</th>'
 	. '</tr></thead>';
@@ -140,14 +140,14 @@ foreach ($matchdays as $m) {
 	));
 	$alternate = !$alternate;
 	print '<tr'.($alternate ? ' class="alternate"' : '').'>'
-		. '<th>' . ++$matchdayNumber . '. Spieltag:</th>'
+		. '<th>' . ++$matchdayNumber . '.&nbsp;Spieltag:</th>'
 		. '<td>'
 		. '<input type="hidden" name="data['.$m->matchday_ID.'][id]" value="'.$m->matchday_ID.'" />'
 		. '<input type="hidden" name="data['.$m->matchday_ID.'][order]" value="'.$m->matchday_order.'" />'
-		. '<input class="auto-team" name="data['.$m->matchday_ID.'][date]" value="'.$m->matchday_date.'" />'
+		. '<input class="auto-team" name="data['.$m->matchday_ID.'][date]" value="'.$m->matchday_date.'" size="10" />'
 		. '</td>'
 		. '<td>'
-		. '<input class="auto-team" name="data['.$m->matchday_ID.'][location]" value="'.$m->matchday_location.'" />'
+		. '<input class="auto-team" name="data['.$m->matchday_ID.'][location]" value="'.$m->matchday_location.'" size="11" />'
 		. '</td>'
 		. '<td><a style="font-weight:normal;" href="'.$editLink.'"><img src="/bilder/icons/pencil.png" height="16" width="16" alt="" /> Spielpaarungen</a></td>'
 		. '</tr>';
