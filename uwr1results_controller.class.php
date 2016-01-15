@@ -379,7 +379,7 @@ class Uwr1resultsController {
 
 	public static function season() {
 		global $wp_query;
-		$desiredSeason = intval($wp_query->query_vars['season']);
+		$desiredSeason = intval(@$wp_query->query_vars['season']);
 		if ($desiredSeason) {
 			return $desiredSeason;
 		}

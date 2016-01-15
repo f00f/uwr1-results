@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `{$fixturesTable}` (
 	KEY `matchday_ID` (`matchday_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 SQL;
-		$this->_wpdb->query($sql);
+		parent::$_wpdb->query($sql);
 	}
 
 	protected function leagueSlug() {
@@ -224,22 +224,22 @@ SQL;
 			. " ORDER BY `f`.`fixture_date`, `f`.`fixture_time`, `f`.`fixture_ID`"
 			;
 
-		// TODO: think about using $this->_wpdb->get_row();
+		// TODO: think about using parent::$_wpdb->get_row();
 		// OBJECT, ARRAY_A, ARRAY_N
 
-		return $this->_wpdb->get_results($sql);
+		return parent::$_wpdb->get_results($sql);
 	}
 
 	public function findFirst($sql) {
 		parent::findFirst($sql);
 		// load matchday data
-		$this->properties['matchday'] =& Uwr1resultsModelMatchday::instance()->findById( $this->matchdayId() );
-		$this->properties['location'] =& $this->matchday()->location();
+		$this->properties['matchday'] = Uwr1resultsModelMatchday::instance()->findById( $this->matchdayId() );
+		$this->properties['location'] = $this->matchday()->location();
 		if ('0000-00-00' == $this->date()) {
-			$this->properties['date'] =& $this->matchday()->date();
+			$this->properties['date'] = $this->matchday()->date();
 		}
 		// load result data
-		$this->properties['result'] =& Uwr1resultsModelResult::instance()->findByFixtureId( $this->id() );
+		$this->properties['result'] = Uwr1resultsModelResult::instance()->findByFixtureId( $this->id() );
 		return $this;
 	}
 } // Uwr1resultsModelFixture

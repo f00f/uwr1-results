@@ -50,11 +50,11 @@ class Uwr1resultsModel {
 	 * @access private
 	 * @return void
 	 */
-	protected function __construct() {
+	public function __construct() {
 		global $wpdb;
 
-		$this->_wpdb =& $wpdb;
-		$this->_wpdb->show_errors();
+		self::$_wpdb =& $wpdb;
+		self::$_wpdb->show_errors();
 
 		foreach ($this->dbMapping as $prop => $dbField) {
 			$this->properties[ $prop ] = '';
@@ -200,7 +200,7 @@ class Uwr1resultsModel {
 
 	protected function findFirst($sql) {
 		global $wpdb;
-		$result =& $wpdb->get_row($sql);
+		$result = $wpdb->get_row($sql);
 
 		foreach ($this->dbMapping as $prop => $dbField) {
 			$this->properties[ $prop ] = $result->$dbField;

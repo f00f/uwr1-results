@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `{$regionsTable}` (
 	PRIMARY KEY (`region_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 SQL;
-		$this->_wpdb->query($sql);
+		parent::$_wpdb->query($sql);
 	}
 
 //		return $GLOBALS['RUL_HARDCODED']['region']['region_ID'];
@@ -71,14 +71,14 @@ SQL;
 		$regionsTable   = parent::getTable(get_class($this));
 		$leaguesTable   = parent::getTable('Uwr1resultsModelLeague');
 
- 		$this->_wpdb->show_errors();
+ 		parent::$_wpdb->show_errors();
 
 		$sql = "SELECT `l`.*, `r`.* FROM `{$regionsTable}` AS `r`"
 			. " LEFT JOIN `{$leaguesTable}` AS `l` ON `l`.`region_ID` = `r`.`region_ID`"
 			. " ORDER BY `r`.`region_ID` < 0, `r`.`region_name` = 'Jugend', `r`.`region_name` = 'Damen', `r`.`region_name`,"
 			. " `l`.`league_level`, CASE WHEN `r`.`region_ID` <0 THEN `l`.`league_ID` END DESC, `l`.`league_name`";
 
-		return $this->_wpdb->get_results($sql);
+		return parent::$_wpdb->get_results($sql);
 	}
 } // Uwr1resultsModelRegion
 Uwr1resultsModelRegion::initTable('Uwr1resultsModelRegion', UWR1RESULTS_TBL_REGIONS);

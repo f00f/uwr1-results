@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS `{$matchdaysTable}` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 SQL;
 	// CHARSET=latin1 COLLATE=latin1_german2_ci
-		$this->_wpdb->query($sql);
+		parent::$_wpdb->query($sql);
 	}
 
 	// ACCESSORS
@@ -162,10 +162,10 @@ SQL;
 			. " ORDER BY `m`.`matchday_order`"
 			;
 
-		// TODO: think about using $this->_wpdb->get_row();
+		// TODO: think about using parent::$_wpdb->get_row();
 		// OBJECT, ARRAY_A, ARRAY_N
 
-		return $this->_wpdb->get_results($sql);
+		return parent::$_wpdb->get_results($sql);
 	}
 
 	public function findByTournamentId( $tournamentId ) {
@@ -181,10 +181,10 @@ SQL;
 			. " ORDER BY `m`.`matchday_order`"
 			;
 
-		// TODO: think about using $this->_wpdb->get_row();
+		// TODO: think about using parent::$_wpdb->get_row();
 		// OBJECT, ARRAY_A, ARRAY_N
 
-		return $this->_wpdb->get_results($sql);
+		return parent::$_wpdb->get_results($sql);
 	}
 
 } // Uwr1resultsModelMatchday

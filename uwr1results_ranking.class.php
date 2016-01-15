@@ -9,7 +9,7 @@ class Uwr1resultsRanking {
     /* Creates the ranking, accumulating all points and goals.
      * @param mixed $results all match results to be considered
      */
-    public function &Uwr1resultsRanking(&$results) {
+    public function Uwr1resultsRanking(&$results) {
         $this->resolveH2H = ! (1 == @$_GET['nodv']);
 
         $this->rnk = array();
@@ -35,20 +35,20 @@ class Uwr1resultsRanking {
 
             $this->rnk[ $f->t_b_ID ]['id'] = $f->t_b_ID;
             $this->rnk[ $f->t_b_ID ]['name'] = $f->t_b_name;
-            $this->rnk[ $f->t_b_ID ]['goalsPos'] += $f->result_goals_b;
-            $this->rnk[ $f->t_b_ID ]['goalsNeg'] += $f->result_goals_w;
-            $this->rnk[ $f->t_b_ID ]['pointsPos'] += $f->result_points_b;
-            $this->rnk[ $f->t_b_ID ]['pointsNeg'] += $f->result_points_w;
-            $this->rnk[ $f->t_b_ID ]['matchesPlayed']++;
+            @$this->rnk[ $f->t_b_ID ]['goalsPos'] += $f->result_goals_b;
+            @$this->rnk[ $f->t_b_ID ]['goalsNeg'] += $f->result_goals_w;
+            @$this->rnk[ $f->t_b_ID ]['pointsPos'] += $f->result_points_b;
+            @$this->rnk[ $f->t_b_ID ]['pointsNeg'] += $f->result_points_w;
+            @$this->rnk[ $f->t_b_ID ]['matchesPlayed']++;
             $this->rnk[ $f->t_b_ID ]['playedAgainst'][$f->t_w_ID] = true;
 
             $this->rnk[ $f->t_w_ID ]['id'] = $f->t_w_ID;
             $this->rnk[ $f->t_w_ID ]['name'] = $f->t_w_name;
-            $this->rnk[ $f->t_w_ID ]['goalsPos'] += $f->result_goals_w;
-            $this->rnk[ $f->t_w_ID ]['goalsNeg'] += $f->result_goals_b;
-            $this->rnk[ $f->t_w_ID ]['pointsPos'] += $f->result_points_w;
-            $this->rnk[ $f->t_w_ID ]['pointsNeg'] += $f->result_points_b;
-            $this->rnk[ $f->t_w_ID ]['matchesPlayed']++;
+            @$this->rnk[ $f->t_w_ID ]['goalsPos'] += $f->result_goals_w;
+            @$this->rnk[ $f->t_w_ID ]['goalsNeg'] += $f->result_goals_b;
+            @$this->rnk[ $f->t_w_ID ]['pointsPos'] += $f->result_points_w;
+            @$this->rnk[ $f->t_w_ID ]['pointsNeg'] += $f->result_points_b;
+            @$this->rnk[ $f->t_w_ID ]['matchesPlayed']++;
             $this->rnk[ $f->t_w_ID ]['playedAgainst'][$f->t_b_ID] = true;
         }
 
@@ -182,7 +182,7 @@ class Uwr1resultsRanking {
             $h2h_resolved = true;
 
             $num_teams_involved = count($ids);
-            $h2h_results =& Uwr1resultsModelResult::instance()->findByTeamIds($ids);
+            $h2h_results = Uwr1resultsModelResult::instance()->findByTeamIds($ids);
             //print '<pre>';print_r($h2h_results);print '</pre>';
             // also, if there are no matches in the comparison, it is undecided
             if (0 === count($h2h_results)) {
@@ -314,10 +314,10 @@ class Uwr1resultsRanking {
         // +1 : a > b : a after  b
 
         // one team played friendly matches only = worse (ausser Konkurrenz)
-        if ($a['friendlyMatchesPlayed'] && ! $a['matchesPlayed'] && $b['matchesPlayed']) {
+        if (@$a['friendlyMatchesPlayed'] && ! $a['matchesPlayed'] && $b['matchesPlayed']) {
             return 1;
         }
-        if ($b['friendlyMatchesPlayed'] && ! $b['matchesPlayed'] && $a['matchesPlayed']) {
+        if (@$b['friendlyMatchesPlayed'] && ! $b['matchesPlayed'] && $a['matchesPlayed']) {
             return -1;
         }
 

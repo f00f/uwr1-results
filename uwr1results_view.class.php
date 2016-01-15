@@ -160,6 +160,9 @@ class Uwr1resultsView {
 		wp_enqueue_script('hoverIntent');
 		wp_enqueue_script('common');
 		wp_enqueue_script('jquery-color');
+		wp_enqueue_script('jquery');
+		wp_enqueue_script('jquery-ui-core');
+		wp_enqueue_script('jquery-ui-accordion');
 		//die('scripts inserted');
 	}
 
@@ -300,7 +303,7 @@ class Uwr1resultsView {
 		if ( is_string($league) ) {
 			$slug =& $league;
 		} else if ( is_object($league) ) {
-			$slug =& $league->slug();
+			$slug = $league->slug();
 			if ($league->hasProperty('regionId')) {
 				$regionId = $league->regionId();
 			}

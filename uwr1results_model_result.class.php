@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `{$resultsTable}` (
 	KEY `fixture_ID` (`fixture_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 SQL;
-		$this->_wpdb->query($sql);
+		parent::$_wpdb->query($sql);
 	}
 
 	public function leagueSlug() {
@@ -164,10 +164,10 @@ SQL;
 				'modified'          => 'NOW()',
 				'goalsBlue'         => 0 + $f['goals_blue'],
 				'goalsWhite'        => 0 + $f['goals_white'],
-				'goalsHalfBlue'     => 0 + $f['goals_half_blue'],
-				'goalsHalfWhite'    => 0 + $f['goals_half_white'],
-				'goalsRegularBlue'  => 0 + $f['goals_regular_blue'],
-				'goalsRegularWhite' => 0 + $f['goals_regular_white'],
+				'goalsHalfBlue'     => 0 + @$f['goals_half_blue'],
+				'goalsHalfWhite'    => 0 + @$f['goals_half_white'],
+				'goalsRegularBlue'  => 0 + @$f['goals_regular_blue'],
+				'goalsRegularWhite' => 0 + @$f['goals_regular_white'],
 				'comment'           => '' . $f['comment'],
 			));
 			$rv = $this->save(false); // don't notifyJsonCache for each store
@@ -246,7 +246,8 @@ SQL;
 		}
 
 		// escape and quote $comment
-		$this->set( 'comment', "'" . Uwr1resultsHelper::sqlEscape( $this->comment() ) . "'" );
+		$comment = $this->comment();
+		$this->set( 'comment', "'" . Uwr1resultsHelper::sqlEscape( $comment ) . "'" );
 
 		$fields = array();
 		$values = array();
@@ -332,7 +333,7 @@ SQL;
 			. " ORDER BY `matchday_date` DESC"
 			//. "          ``"
 			;
-		return $this->_wpdb->get_results($sql);
+		return parent::$_wpdb->get_results($sql);
 	}
 /*
 	public function findByMatchdayId( $matchdayId ) {
@@ -359,10 +360,10 @@ SQL;
 			. " ORDER BY `m`.`matchday_order`, `f`.`fixture_date`, `f`.`fixture_time`, `f`.`fixture_ID`"
 			;
 
-		// TODO: think about using $this->_wpdb->get_row();
+		// TODO: think about using parent::$_wpdb->get_row();
 		// OBJECT, ARRAY_A, ARRAY_N
 
-		return $this->_wpdb->get_results($sql);
+		return parent::$_wpdb->get_results($sql);
 	}
 */
 	public function findByLeagueId( $leagueId, $seasonId = 0 ) {
@@ -391,10 +392,10 @@ SQL;
 			. " ORDER BY `m`.`matchday_order`, `f`.`fixture_date`, `f`.`fixture_time`, `f`.`fixture_ID`"
 			;
 
-		// TODO: think about using $this->_wpdb->get_row();
+		// TODO: think about using parent::$_wpdb->get_row();
 		// OBJECT, ARRAY_A, ARRAY_N
 
-		return $this->_wpdb->get_results($sql);
+		return parent::$_wpdb->get_results($sql);
 	}
 
 	public function findByTournamentId( $tournamentId ) {
@@ -421,10 +422,10 @@ SQL;
 			. " ORDER BY `m`.`matchday_order`, `f`.`fixture_date`, `f`.`fixture_time`, `f`.`fixture_ID`"
 			;
 
-		// TODO: think about using $this->_wpdb->get_row();
+		// TODO: think about using parent::$_wpdb->get_row();
 		// OBJECT, ARRAY_A, ARRAY_N
 
-		return $this->_wpdb->get_results($sql);
+		return parent::$_wpdb->get_results($sql);
 	}
 
 	// for backward-compatibility: unwrap return value
@@ -480,12 +481,12 @@ SQL;
 				. " WHERE `r`.`result_modified` > '{$dateInThePast}'"
 				. " ORDER BY `r`.`result_modified` DESC"
 				;
-			$this->_wpdb->get_results($sql);
+			parent::$_wpdb->get_results($sql);
 	
-			if ($this->_wpdb->num_rows >= $args['num']) {
+			if (parent::$_wpdb->num_rows >= $args['num']) {
 				$ret['status'] = 'OK';
 				$ret['limit']  = 'days';
-				$ret['result'] = $this->_wpdb->last_result;
+				$ret['result'] = parent::$_wpdb->last_result;
 				return $ret;
 			}
 		}
@@ -514,15 +515,15 @@ SQL;
 			. " LIMIT 0, {$args['num']}"
 			;
 
-		// TODO: think about using $this->_wpdb->get_row();
+		// TODO: think about using parent::$_wpdb->get_row();
 		// OBJECT, ARRAY_A, ARRAY_N
 
-		$this->_wpdb->get_results($sql);
+		parent::$_wpdb->get_results($sql);
 
-		if ($this->_wpdb->num_rows > 0) {
+		if (parent::$_wpdb->num_rows > 0) {
 			$ret['status'] = 'OK';
 			$ret['limit']  = 'num';
-			$ret['result'] = $this->_wpdb->last_result;
+			$ret['result'] = parent::$_wpdb->last_result;
 			return $ret;
 		}
 

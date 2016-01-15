@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `{$teamsTable}` (
 	UNIQUE KEY `team_name` (`team_name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 SQL;
-		$this->_wpdb->query($sql);
+		parent::$_wpdb->query($sql);
 	}
 
 
@@ -72,7 +72,7 @@ SQL;
 		$sql = "SELECT * FROM `{$teamsTable}`"
 			. " WHERE `team_name` = '{$name}'";
 
-		$team = $this->_wpdb->get_row($sql);
+		$team = parent::$_wpdb->get_row($sql);
 
 		if (empty($team)) {
 			return false;
@@ -91,7 +91,7 @@ SQL;
 			. " LEFT JOIN `{$teamsTable}` AS `t` ON `lt`.`team_ID` = `t`.`team_ID`"
 			. " WHERE `lt`.`league_ID` = {$leagueId}";
 
-		return $this->_wpdb->get_results($sql);
+		return parent::$_wpdb->get_results($sql);
 	}
 } // Uwr1resultsModelTeam
 Uwr1resultsModelTeam::initTable('Uwr1resultsModelTeam', UWR1RESULTS_TBL_TEAMS);

@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS `{$leaguesTable}` (
 	KEY `region_ID` (`region_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 SQL;
-		return $this->_wpdb->query($sql);
+		return parent::$_wpdb->query($sql);
 	}
 
 	protected function leagueSlug() {
@@ -104,9 +104,9 @@ SQL;
 		if (is_null($this->matchdays)) {
 			$this->matchdays = array();
 			if ($this->regionId() > 0) {
-				$matchdays =& Uwr1resultsModelMatchday::instance()->findByLeagueId( $this->id() ); // getMatchdays($league /* [$season,$tournament] */);
+				$matchdays = Uwr1resultsModelMatchday::instance()->findByLeagueId( $this->id() ); // getMatchdays($league /* [$season,$tournament] */);
 			} else {
-				$matchdays =& Uwr1resultsModelMatchday::instance()->findByTournamentId( $this->id() ); // getMatchdays($league /* [$season,$tournament] */);
+				$matchdays = Uwr1resultsModelMatchday::instance()->findByTournamentId( $this->id() ); // getMatchdays($league /* [$season,$tournament] */);
 			}
 			foreach ($matchdays as $m) {
 				$this->matchdays[ $m->matchday_order ] = $m;
@@ -120,9 +120,9 @@ SQL;
 			// load results
 			$this->results = array();
 			if ($this->regionId() > 0) {
-				$this->results =& Uwr1resultsModelResult::instance()->findByLeagueId( $this->id() ); // getMatchdays($league /* [$season,$tournament] */);
+				$this->results = Uwr1resultsModelResult::instance()->findByLeagueId( $this->id() ); // getMatchdays($league /* [$season,$tournament] */);
 			} else {
-				$this->results =& Uwr1resultsModelResult::instance()->findByTournamentId( $this->id() ); // getMatchdays($league /* [$season,$tournament] */);
+				$this->results = Uwr1resultsModelResult::instance()->findByTournamentId( $this->id() ); // getMatchdays($league /* [$season,$tournament] */);
 			}
 		}
 		return $this->results;
@@ -153,16 +153,16 @@ SQL;
 			return false;
 		}
 
-		$this->_wpdb->show_errors(true);
+		parent::$_wpdb->show_errors(true);
 		$leaguesTeamsTable = parent::getTable('Uwr1resultsModelTeam');
 
 		// clear table
 		$sql = "DELETE FROM `{$leaguesTeamsTable}`"
 			. " WHERE `league_ID` = {$this->id}";
 			// . " AND `season` = {$SEASON}";
-		//$this->_wpdb->query($sql);
+		//parent::$_wpdb->query($sql);
 
-		$rmt =& Uwr1resultsModelTeam::instance();
+		$rmt = Uwr1resultsModelTeam::instance();
 		$numTeams = count($teams);
 		for ($t=0; $t<$numTeams; ++$t) {
 			$teamName =& $teams[ $t ];
@@ -173,7 +173,7 @@ SQL;
 			$sql = "REPLACE INTO `{$leaguesTeamsTable}`"
 				. " (`league_ID`, `team_number`, `team_ID`) VALUES"
 				. " ({$this->id}, {$t}, '{$team->team_ID}')";
-			$this->_wpdb->query($sql);
+			parent::$_wpdb->query($sql);
 		}
 
 		//$this->notifyJsonCache($this->leagueSlug(), __FILE__);
