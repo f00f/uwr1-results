@@ -214,7 +214,7 @@ SQL;
 
 		// all cases where an update is needed:
 		// 1) new result (there is no old result)
-		if (!$doSave && !@$oldResult->id) {
+		if (!$doSave && !@$oldResult->id()) {
 			$doSave = true;
 		}
 		// 2) result changed (we optimistically assume the new one is a correction)
@@ -268,7 +268,7 @@ SQL;
 			. " ({$fieldsStr})"
 			. ' VALUES'
 			. " ({$valuesStr})";
-//		print $sql;exit;
+		//print $sql;exit;
 		$res = $wpdb->query($sql);
 		
 		if ($res && $notifyJsonCache) {

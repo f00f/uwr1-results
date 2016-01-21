@@ -95,7 +95,7 @@ class Uwr1resultsModel {
 		//print get_class($this).'::__call';
 		
 		// universal get/set method
-		if (isset($this->properties[ $method ])) {
+		if ($this->hasProperty($method)) {
 			if (0 == count($params)) {
 				//print 'returning '.$method;
 				return $this->properties[ $method ];
@@ -112,11 +112,11 @@ class Uwr1resultsModel {
 	}
 
 	public function hasProperty($propName) {
-		return isset($this->properties[ $propName ]);
+		return array_key_exists($propName, $this->properties);
 	}
 
 	protected function set($propName, $value) {
-		if ( !isset($this->properties[ $propName ]) ) {
+		if ( !$this->hasProperty($propName ) ) {
 			return false;
 		}
 		$this->properties[ $propName ] = $value;
