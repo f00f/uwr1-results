@@ -39,7 +39,7 @@ define('UWR1RESULTS_CAPABILITIES_ADD',  'read');
 define('UWR1RESULTS_CAPABILITIES_EDIT',  'edit_others_posts');
 # END OF CONFIG
 
-define('UWR1RESULTS_VERSION', '1.7');
+define('UWR1RESULTS_VERSION', '1.8');
 define('UWR1RESULTS_AJAX_API_VERSION', '2');
 
 define('UWR1RESULTS_TBL_REGIONS',   UWR1RESULTS_TBL_PRE . 'regions'  );
