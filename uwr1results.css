@@ -68,6 +68,8 @@
 #breadcrumbs     { font-size:12px; }
 
 .index.region    { font-size:14px;float:left; margin-right:1em; margin-bottom:1em; }
+.index.league-level { margin-bottom:1em; }
+.index.league-level .league { float:left;margin-right:1.5em;margin-bottom:1em; }
 
 div.ranking,
 div.matchday     { margin-bottom:1.5em; }

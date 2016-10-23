@@ -24,43 +24,37 @@ get_header();
 
 	// breadcrumbs
 	print '<div id="breadcrumbs">Du bist hier: <a href="'.Uwr1resultsView::indexUrl().'">UWR Ergebnisse</a></div><br />';
-	//<p class="notice">Dieser Teil von <a href="http://uwr1.de/" title="Unterwasserrugby">uwr1.de</a> befindet sich noch in der Entwicklung. Es kann deshalb passieren, dass noch Fehler auftreten.</p>
-/*
-global $wp_query;
-print '<hr />';
-print_r( getRewriteRules() );
-print '<hr />';
-print_r( $wp_query->query_vars );
-print '<hr />';
-*/
 
 	$currentLevel = 0;
+	$currentLevelName = '';
 	foreach ($leagues as $l) {
 		if ($l->league_level != $currentLevel) {
 			// begin new level
 			if (0 != $currentLevel) {
 				// end previous region
+				print '<br class="clear">';
 				print '</div>';
 			}
-			$levelName = Uwr1resultsModelLeague::levelName($l->league_name);
+			$currentLevelName = Uwr1resultsModelLeague::levelName($l->league_name);
 			if ($currentLevel * $l->region_ID < 0) {
 				//print '<br style="clear:both;" /><hr style="margin-top:1.3em; margin-bottom:1.3em;" />';
 			}
-			print '<div class="uwr1results index region">';
-			print '<h2 class="entry-title">' . $levelName . '</h2>';
+			print '<div class="uwr1results index league-level">';
+			print '<h2 class="entry-title">' . $currentLevelName . '</h2>';
 
 			$currentLevel = $l->league_level;
 		}
 
 		// print league
-		print '<div>'
+		print '<div class="league">'
 		      . '<a href="'.Uwr1resultsView::resultsPageUrl($l->league_slug, $l->region_ID).'" title="Unterwasser Rugby Ergebnisse '.$l->league_name.'">'
-		      . $l->league_name
+		      . str_replace($currentLevelName, '', $l->league_name)
 		      . '</a>'
 		      . '</div>';
 	}
 	if (0 != $currentLevel) {
 		// end last region
+		print '<br class="clear">';
 		print '</div>';
 	}
 	?>
