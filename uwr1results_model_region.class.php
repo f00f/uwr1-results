@@ -68,15 +68,15 @@ SQL;
 			$season = Uwr1resultsController::season();
 		}
 
-		$regionsTable   = parent::getTable(get_class($this));
-		$leaguesTable   = parent::getTable('Uwr1resultsModelLeague');
+		$regionsTable = parent::getTable(get_class($this));
+		$leaguesTable = parent::getTable('Uwr1resultsModelLeague');
 
  		parent::$_wpdb->show_errors();
 
 		$sql = "SELECT `l`.*, `r`.* FROM `{$regionsTable}` AS `r`"
 			. " LEFT JOIN `{$leaguesTable}` AS `l` ON `l`.`region_ID` = `r`.`region_ID`"
-			. " ORDER BY `r`.`region_ID` < 0, `r`.`region_name` = 'Jugend', `r`.`region_name` = 'Damen', `r`.`region_name`,"
-			. " `l`.`league_level`, CASE WHEN `r`.`region_ID` <0 THEN `l`.`league_ID` END DESC, `l`.`league_name`";
+			. " WHERE `r`.`region_ID` > 0 AND `l`.`league_ID` > 0"
+			. " ORDER BY `l`.`league_level`, `r`.`region_name` = 'Jugend', `r`.`region_name` = 'Damen', `r`.`region_name`, `l`.`league_name`";
 
 		return parent::$_wpdb->get_results($sql);
 	}

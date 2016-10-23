@@ -14,7 +14,7 @@ print '<style>'
 
 // this should be in the controller, but it's more convenient to have it here - for now.
 //Uwr1resultsModelRegion::instance()->season(/*$season*/);
-$regions = Uwr1resultsModelRegion::instance()->findBySeason(/*$season*/);
+$leagues = Uwr1resultsModelRegion::instance()->findBySeason(/*$season*/);
 
 
 /**
@@ -22,46 +22,49 @@ $regions = Uwr1resultsModelRegion::instance()->findBySeason(/*$season*/);
  */
 
 print '<div class="wrap">';
-print '<h2>'.__('UWR Ligen und Ergebnisse').'</h2>';
+print '<h2>'.__('UWR Ergebnisse').'</h2>';
 
-$currentRegion = 0;
-foreach($regions as $r) {
-	if ($currentRegion != $r->region_ID) {
-		if (0 != $currentRegion) {
+$currentLevel = 0;
+foreach($leagues as $l) {
+	if ($l->league_level != $currentLevel) {
+			// begin new level
+		if (0 != $currentLevel) {
 			print '</ul>'; // close previous
 		}
+		$levelName = Uwr1resultsModelLeague::levelName($l->league_name);
 		$editLink = Uwr1resultsView::editLink(array(
 			'action' => 'edit_region',
-			'region_id' => $r->region_ID,
+			'region_id' => $l->region_ID,
 //			'season' => Uwr1resultsCont...,
 			));
 		print '<h3>'
-			. (('Turniere' != $r->region_name && 'Jugend' != $r->region_name) ? 'SB ' : '')
-			. $r->region_name
+			//. (('Turniere' != $l->region_name && 'Jugend' != $l->region_name) ? 'SB ' : '')
+			//. $l->region_name
+			. $levelName
 //			. ' <small style="font-weight:normal;">[<a class="disfunct" href="'.$editLink.'">'.__('Edit').'</a>]</small>'
 			. '</h3>'
 			.'<ul>';
-		$currentRegion = $r->region_ID;
+		$currentLevel = $l->league_level;
 	}
 
 	$matchdaysLink = Uwr1resultsView::editLink(array(
 		'action' => 'edit_league_matchdays',
-		'league_id' => $r->league_ID,
+		'league_id' => $l->league_ID,
 //		'season' => Uwr1resultsCont...,
 		));
 	$teamsLink = Uwr1resultsView::editLink(array(
 		'action' => 'edit_league_teams',
-		'league_id' => $r->league_ID,
+		'league_id' => $l->league_ID,
 //		'season' => Uwr1resultsCont...,
 		));
 	$editLink = Uwr1resultsView::editLink(array(
 		'action' => 'edit_league',
-		'league_id' => $r->league_ID,
+		'league_id' => $l->league_ID,
 //		'season' => Uwr1resultsCont...,
 		));
-	$viewLink = Uwr1resultsView::resultsPageUrl($r->league_slug, $r->region_ID);
+	$viewLink = Uwr1resultsView::resultsPageUrl($l->league_slug, $l->region_ID);
 	print '<li>'
-		. $r->league_name
+		. $l->league_name
 //		. '<br />'
 		. ' ['
 		. '<a href="'.$matchdaysLink.'">'.__('Spieltage bearbeiten').'</a>'
@@ -70,11 +73,11 @@ foreach($regions as $r) {
 //		. ', '
 //		. '<a class="disfunct" href="'.$editLink.'">'.__('Edit').'</a>'
 		. ', '
-		. '<a href="'.$viewLink.'">'.( (UWR1RESULTS_TOURNAMENT_REGION == $r->region_ID) ? __('Turnier anzeigen') : __('Liga anzeigen') ).'</a>'
+		. '<a href="'.$viewLink.'">'.( (UWR1RESULTS_TOURNAMENT_REGION == $l->region_ID) ? __('Turnier anzeigen') : __('Liga anzeigen') ).'</a>'
 		. ']'
 		. '</li>';
 }
-if (0 != $currentRegion) {
+if (0 != $currentLevel) {
 	print '</ul>'; // close last
 }
 ?>

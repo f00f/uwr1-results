@@ -92,7 +92,28 @@ SQL;
 	}
 
 	// ACCESSORS
-	
+
+	// static helper function (used with data from Region objects)
+	public function levelName($league_name) {
+		$levelName = '1. UWR Bundesliga';
+		if (false !== strpos($league_name, $levelName)) {
+			return $levelName;
+		}
+		$levelName = '2. UWR Bundesliga';
+		if (false !== strpos($league_name, $levelName)) {
+			return $levelName;
+		}
+		$levelName = 'UWR Landesliga';
+		if (false !== strpos($league_name, $levelName)) {
+			return $levelName;
+		}
+		$levelName = 'UWR Bezirksliga';
+		if (false !== strpos($league_name, $levelName)) {
+			return $levelName;
+		}
+		return $league_name;
+	}
+
 	public function shortName() {
 		if( isset($this->properties[ 'shortName' ]) && !$this->properties[ 'shortName' ] ) {
 			$this->set('shortName', $this->name());

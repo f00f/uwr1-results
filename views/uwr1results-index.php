@@ -8,7 +8,7 @@ Author URI: http://uwr1.de/
 */
 
 $season = Uwr1resultsController::season();
-$regions =& Uwr1resultsModelRegion::instance()->findBySeason( $season );
+$leagues =& Uwr1resultsModelRegion::instance()->findBySeason( $season );
 
 get_header();
 //<div class="primary" id="content">
@@ -34,31 +34,32 @@ print_r( $wp_query->query_vars );
 print '<hr />';
 */
 
-	$currentRegion = 0;
-	foreach ($regions as $r) {
-		if ($r->region_ID != $currentRegion) {
-			// begin new region
-			if (0 != $currentRegion) {
+	$currentLevel = 0;
+	foreach ($leagues as $l) {
+		if ($l->league_level != $currentLevel) {
+			// begin new level
+			if (0 != $currentLevel) {
 				// end previous region
 				print '</div>';
 			}
-			if ($currentRegion * $r->region_ID < 0) {
-				print '<br style="clear:both;" /><hr style="margin-top:1.3em; margin-bottom:1.3em;" />';
+			$levelName = Uwr1resultsModelLeague::levelName($l->league_name);
+			if ($currentLevel * $l->region_ID < 0) {
+				//print '<br style="clear:both;" /><hr style="margin-top:1.3em; margin-bottom:1.3em;" />';
 			}
 			print '<div class="uwr1results index region">';
-			print '<h2 class="entry-title">' . $r->region_name . '</h2>';
+			print '<h2 class="entry-title">' . $levelName . '</h2>';
 
-			$currentRegion = $r->region_ID;
+			$currentLevel = $l->league_level;
 		}
 
 		// print league
 		print '<div>'
-		      . '<a href="'.Uwr1resultsView::resultsPageUrl($r->league_slug, $r->region_ID).'" title="Unterwasser Rugby Ergebnisse '.$r->league_name.'">'
-		      . $r->league_name
+		      . '<a href="'.Uwr1resultsView::resultsPageUrl($l->league_slug, $l->region_ID).'" title="Unterwasser Rugby Ergebnisse '.$l->league_name.'">'
+		      . $l->league_name
 		      . '</a>'
 		      . '</div>';
 	}
-	if (0 != $currentRegion) {
+	if (0 != $currentLevel) {
 		// end last region
 		print '</div>';
 	}
