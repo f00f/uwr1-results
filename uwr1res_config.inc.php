@@ -27,7 +27,7 @@ define('UWR1RESULTS_PAGE_ID_LEAGUE_PX',     UWR1RESULTS_PAGE_ID_PX.'76'); // 76 
 define('UWR1RESULTS_PAGE_ID_TOURNAMENT_PX', UWR1RESULTS_PAGE_ID_PX.'84'); // 76 = hexdec(bin2hex('L'))
 //define('UWR1RESULTS_PAGE_ID_LEAGUE', UWR1RESULTS_PAGE_ID_PREFIX.'76'.LEAGUE_ID); // 76 = hexdec(bin2hex('L'))
 
-define('UWR1RESULTS_SEASON', 2015);// first year of the season
+define('UWR1RESULTS_SEASON', date('n') < 9 ? date('Y') - 1 : date('Y'));// first year of the season
 define('UWR1RESULTS_TOURNAMENT_REGION', -1);
 
 define('UWR1RESULTS_JSON_CACHE_URL', 'http://uwr1cdn.appspot.com/jc/json');
@@ -39,7 +39,7 @@ define('UWR1RESULTS_CAPABILITIES_ADD',  'read');
 define('UWR1RESULTS_CAPABILITIES_EDIT',  'edit_others_posts');
 # END OF CONFIG
 
-define('UWR1RESULTS_VERSION', '1.8');
+define('UWR1RESULTS_VERSION', '1.9');
 define('UWR1RESULTS_AJAX_API_VERSION', '2');
 
 define('UWR1RESULTS_TBL_REGIONS',   UWR1RESULTS_TBL_PRE . 'regions'  );
