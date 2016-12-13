@@ -30,8 +30,8 @@ define('UWR1RESULTS_PAGE_ID_TOURNAMENT_PX', UWR1RESULTS_PAGE_ID_PX.'84'); // 76 
 define('UWR1RESULTS_SEASON', date('n') < 9 ? date('Y') - 1 : date('Y'));// first year of the season
 define('UWR1RESULTS_TOURNAMENT_REGION', -1);
 
-define('UWR1RESULTS_JSON_CACHE_URL', 'http://uwr1cdn.appspot.com/jc/json');
-define('UWR1RESULTS_JSON_CACHE_UPDATE_URL', 'http://uwr1cdn.appspot.com/jc/update');
+define('UWR1RESULTS_JSON_CACHE_URL', 'http://uwr1cdn2.appspot.com/jc/json');
+define('UWR1RESULTS_JSON_CACHE_UPDATE_URL', 'http://uwr1cdn2.appspot.com/jc/update');
 
 define('UWR1RESULTS_CAPABILITIES',  'read');
 // _ADD and _EDIT are yet unused as Ergebnisdienst is very open.
