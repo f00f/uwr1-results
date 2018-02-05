@@ -162,7 +162,7 @@ class Uwr1resultsWidget extends CachedWidget {
 		$season = $season.'/'.($season+1); // TODO: make a function for that
 		return '<table><tr><td>'
 			. 'Es sind noch keine Ergebnisse f&uuml;r die Saison ' . $season . ' vorhanden.<br />'
-			. 'Falls Du welche weisst kannst Du sie <a href="http://uwr1.de/ergebnisse">hier eintragen</a>.'
+			. 'Falls Du welche weisst kannst Du sie <a href="http://uwr1.de/wp/wp-admin/admin.php?page=uwr1results">hier eintragen</a>.'
 			. '</td></tr></table>';
 	}
 
