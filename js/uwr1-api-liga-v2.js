@@ -39,7 +39,7 @@ uwr1.results = {
 			+ '<div class="uwr1 pwdbyuwr1">Alle <a href="http://uwr1.de/ergebnisse/">UWR Ergebnisse</a> dierkt auf uwr1.de ansehen.</div>';
 		jQuery('#'+elemId).html( html );
 		return false;
-	},
+	}
 };
 
 uwr1.results.Ranking = function(l, elemId) {
@@ -89,7 +89,7 @@ uwr1.results.RankingBE = {
 			}
 			jQuery('#'+elemId).html( uwr1.results.RankingBE.render(data.res) );
 		});
-	},
+	}
 }; /* /Ranking */
 
 //  load matchdays

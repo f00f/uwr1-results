@@ -75,6 +75,7 @@ function loadRanking(liga) {
 		});
 		//jQuery('#'+elemId).removeClass('loading');
 		ranking += '<tr><td colspan="6"><div class="poweredbyuwr1">Weitere <a href="http://uwr1.de/ergebnisse/">UWR Ergebnisse</a></div></td></tr></table></div>';
+		// TODO: Add new version hint
 		jQuery('#'+elemId).html(ranking);
 	});
 }
