@@ -178,23 +178,32 @@ class Uwr1resultsRanking {
      */
     private function resolveHead2HeadSituations() {
         foreach ($this->head2headTeamIDs as $pts => $ids) {
-            //print 'resolving '.implode(', ', $this->head2headTeams[ $pts ]).'<br />';
+            // Resolve head-to-head for teams with $pts points
             $h2h_resolved = true;
 
             $num_teams_involved = count($ids);
-            $h2h_results = Uwr1resultsModelResult::instance()->findByTeamIds($ids);
-            //print '<pre>';print_r($h2h_results);print '</pre>';
-            // also, if there are no matches in the comparison, it is undecided
+            $h2h_results_all = Uwr1resultsModelResult::instance()->findByTeamIds($ids);
+            $h2h_results = array();
+            $ids_as_int = array_keys($ids);
+            for ($i = 0; $i < count($h2h_results_all); $i++) {
+                $result =& $h2h_results_all[$i];
+                if (!in_array($result->t_b_ID, $ids_as_int)
+                    || !in_array($result->t_w_ID, $ids_as_int)) {
+                    continue;
+                }
+                $h2h_results[] =& $result;
+            }
+            // if there are no matches in the comparison, it is undecided
             if (0 === count($h2h_results)) {
+                // No matches in comparison -> undecidable
                 $h2h_resolved = false;
-                //print 'no matches in comparison -&gt; undecidable.<br />';
                 $this->resetHead2HeadSituation($ids);
                 continue; // check next h2h situation
             }
             $h2h_rnk = new Uwr1resultsRanking($h2h_results);
             if ($h2h_rnk->numTeams() != $num_teams_involved) {
+                // H2H ranking incomplete -> undecidable
                 $h2h_resolved = false;
-                //print 'H2H ranking incomplete -&gt; undecidable.<br />';
                 $this->resetHead2HeadSituation($ids);
                 continue; // check next h2h situation
             }
@@ -219,7 +228,7 @@ class Uwr1resultsRanking {
                         $matches_played = $rank['matchesPlayed'];
                     } elseif ($rank['matchesPlayed'] != $matches_played) {
                         $h2h_resolved = false;
-                        //print 'inequal num. of matches -&gt; undecidable.<br />';
+                        // Inequal num. of matches -> undecidable
                         $this->resetHead2HeadSituation($ids);
                         break;
                     }
@@ -253,7 +262,7 @@ class Uwr1resultsRanking {
                         }
                     }
                     if ($all_equal) {
-                        //print 'all teams equal -&gt; undecidable.<br />';
+                        //All teams equal -> undecidable
                         $h2h_resolved = false;
                         $this->resetHead2HeadSituation($ids);
                         break;
@@ -274,13 +283,12 @@ class Uwr1resultsRanking {
                 */
                 $order_correct = $this->checkIfOrderIsCorrect($h2h_rnk);
                 if ($order_correct) {
-                    //print 'Prev. order was already correct<br />';
+                    // Prev. order was already correct
                 } else {
                     $this->alterRankingOrder(array_keys($h2h_rnk->rnk));
                 }
             } else {
-                //print 'H2H is still undecided. Will NOT update order of ranking.<br />';
-                //print '<pre>';print_r($h2h_rnk);print '</pre>';
+                // H2H is still undecided. Will NOT update order of ranking
             }
             // in each of the above cases the h2h situation is resolved.
             $this->resetHead2HeadSituation($ids);
