@@ -1,7 +1,7 @@
 // Author: Hannes Hofmann, URL: http://uwr1.de/, License: BSD
 function loadJS(u){document.write('<script type="text/javascript" src="'+u+'"></script>');}
 
-loadJS('http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js');
+loadJS('https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js');
 // load actual uwr1 API scripts
 document.write('<link href="https://uwr1cdn2.appspot.com/css/uwr1-api-liga.css" rel="stylesheet" type="text/css" />');
 
