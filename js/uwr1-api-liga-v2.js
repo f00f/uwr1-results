@@ -3,7 +3,7 @@
 // License: BSD
 // TODO: Encapsulate in object(s)
 //var ajaxBaseUrl = '/ergebnisse/ajax/';
-var ajaxBaseUrlAE = 'http://uwr1cdn.appspot.com/jc/json';
+var ajaxBaseUrlAE = 'https://uwr1cdn2.appspot.com/jc/json';
 //var path = 'path';
 //var host = 'host';
 //var view = 'view';
