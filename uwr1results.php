@@ -17,5 +17,6 @@ Compatibility: This plugin requires PHP5.
 require_once 'uwr1results_controller.class.php';
 
 // (De-)Activation hooks
-register_activation_hook(__FILE__, array('RulesultsController', 'activatePlugin'));
-register_deactivation_hook(__FILE__, array('RulesultsController', 'deactivatePlugin'));
+register_activation_hook(__FILE__, array('Uwr1resultsController', 'activatePlugin'));
+register_deactivation_hook(__FILE__, array('Uwr1resultsController', 'deactivatePlugin'));
+
