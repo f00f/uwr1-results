@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS `{$fixturesTable}` (
 	`fixture_ID`          int(11) NOT NULL auto_increment,
 	`matchday_ID`         int(11) NOT NULL default '0',
 	`fixture_order`       tinyint(4) NOT NULL default '0',
-	`fixture_friendly`    enum('0', '1') NOT NULL default 0,
+	`fixture_friendly`    enum('0', '1') NOT NULL default '0',
 	`fixture_date`        date NOT NULL default '0000-00-00',
 	`fixture_time`        time NOT NULL default '00:00:00',
 	`fixture_team_blue`   int(11) NOT NULL default '0',
