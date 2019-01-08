@@ -50,8 +50,8 @@ extends Uwr1resultsModel {
 		$sql = <<<SQL
 CREATE TABLE IF NOT EXISTS `{$teamsTable}` (
 	`team_ID`    INT(11) NOT NULL auto_increment,
+	`team_country`  VARCHAR(10) collate utf8_general_ci NOT NULL,
 	`team_name`  VARCHAR(50) collate utf8_general_ci NOT NULL,
-	`team_country`  VARCHAR(100) collate utf8_general_ci NOT NULL,
 	`team_slug`  VARCHAR(50) collate utf8_general_ci NOT NULL,
 	PRIMARY KEY (`team_ID`),
 	UNIQUE KEY `team_name` (`team_name`)
